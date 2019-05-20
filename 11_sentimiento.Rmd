@@ -7,17 +7,21 @@ En la actualidad hay dos aproximaciones: la del **aprendizaje automático** (_ma
 
 El otro modo es el enfoque **semántico**. Este se caracteriza por el uso de diccionarios de términos o lexicones en los que cada palabra está marcada con una orientación semántica de polaridad u opinión. Estos sistemas, por lo general, lo que hacen es preprocesar el texto, para lo que lo dividen en palabras, pero como hay muchas que no tienen ningún valor, las llamadas palabras de función (artículos, conjunciones, preposiciones…), las eliminan comparando los textos contra una lista de palabras vacías (_stopwords_), y luego se ve si las palabras existen en el lexicón y qué valor de polaridad se les ha dado y, por medio de sumar y restar los valores positivos y negativos llega a establecerse una valencia para el sentimiento de un texto.
 
-Ante estas posibilidades, en Estados Unidos una serie de investigadores empezaron a preguntarse si era posible aplicar estas técnicas a los textos literarios y qué conclusiones se podía sacar de los resultados (Mohammad 2013; Archer & Jockers 2016: 108). Uno de los sistemas mejor desarrollados es de Mathew L. Jockers y el paquete `syuzhet` desarrollado en el lenguaje `R`, aunque este investigador lo hace dentro del ámbito de la teoría de la forma de las historias (cfr. el vídeo de [Kurt Vonnegut](https://youtu.be/oP3c1h8v2ZQ); Booker 2004) y le sirve para explicar en qué reside el éxito de novelas como __Cincuenta sombras de Grey__ y cuán similares son la trayectoria de su historia esta última y __El Código Da Vinci__ de Dan Brown (Archie & Jockers 2016) (figura 11.1).
+Ante estas posibilidades, en Estados Unidos una serie de investigadores empezaron a preguntarse si era posible aplicar estas técnicas a los textos literarios y qué conclusiones se podía sacar de los resultados (Mohammad 2013; Archer & Jockers 2016: 108). Uno de los sistemas mejor desarrollados es de Mathew L. Jockers y el paquete `syuzhet` desarrollado en el lenguaje `R`, aunque este investigador lo hace dentro del ámbito de la teoría de la forma de las historias (cfr. el vídeo de [Kurt Vonnegut](https://youtu.be/oP3c1h8v2ZQ); Booker 2004) y le sirve para explicar en qué reside el éxito de novelas como _Cincuenta sombras de Grey_ y cuán similares son la trayectoria de su historia esta última y _El Código Da Vinci_ de Dan Brown (Archie & Jockers 2016) (figura 11.1).
 
 ```{R 11-Sentimiento-01, echo = FALSE, out.width = '50%', fig.align='center', fig.cap = "Figura 11.1. Trayectorias de _The Da Vinci Code_ y _Fifty Shades of Grey_ según los análisis de Archer & Jockers (2016: 106)"}
 knitr::include_graphics("imagenes/11-Sentimiento-01.jpg")
 ```
 
+El sistema que te voy a presentar de análisis no es perfecto. Se basa en contar en el texto que se examina cuántas palabras tienen un valor positivo y cuántas lo tienen negativa y con eso se establece una valencia que puede ser positiva o negativa (si es cero es neutra). No tiene en cuenta los modificadores que pueden cambiar totalmente el sentido de una frase. Una frase como _La película no estuvo mal_ sería negativa porque no tiene en cuenta que el no cambia el sentido de mal y le daría un valor positivo. Y lo mismo cabría decir de _Eso no estuvo bien_. Sería positiva para la máquina porque solo contemplaría bien, positivo, pero el no lo cambia en algo negativo. Esto puede ser un problema cuando se examinan textos muy breves, como los tweets o reseñas de sitios como TripAdvisor o Booking, pero para textos más complejos, como son los literarios no supone un problema (Mohammad 2011: 106). Además, se puede mejorar la técnica con el uso de bigramas y coocurrencias que has visto en un capítulo anterior.
+
+
 ## Análisis de sentimientos en español
+### Preparar el entorno
 
 Hasta donde sabemos, en español no se ha aplicado el análisis de sentimientos a textos literarios por el sencillo hecho de que no hay diccionarios disponibles ni investigadores interesados en el tema. Sin embargo, en [7PartidasDigital](https://7partidas.hypotheses.org/) hemos adaptado (traducido) al español los que tiene la librería tidytext que estás utilizando en este curso (Fradejas Rueda, en prensa) y creado otro que designamos `uva`.
 
-Te voy a mostrar cómo hacer un análisis de sentimientos aplicado a textos literarios, aunque será muy básico. Todo el material que necesitas lo tienes en los subdirectorios datos –`episodios.rda` y `diccionarios.rda`– y codigo –`get_sentiments.R`–.
+Te voy a mostrar cómo hacer un análisis de sentimientos aplicado a textos literarios, aunque será muy básico. Todo el material que necesitas lo puedes cargar desde el repositorio del proyecto, así no habrá problemas con las letras que lleven diacríticos, un auténtico martirio en Windows.
 
 Como de costumbre, inicia una nueva sesión de `RStudio` y carga las librerías básicas:
 
@@ -25,26 +29,20 @@ Como de costumbre, inicia una nueva sesión de `RStudio` y carga las librerías 
 library(tidyverse)
 library(tidytext)
 ```
-```{r echo = FALSE, message=FALSE}
+```{r echo = FALSE}
 library(tidyverse)
 library(tidytext)
-load("~/Dropbox/AnaText/datos/diccionarios.rda")
-source("~/Dropbox/AnaText/codigo/get_sentiments.R")
 ```
-El siguiente paso es cargar los textos. Podrías hacerlo tomándolos de subdirectorio `datos/galdos` donde tienes una copia de las cuarentaiséis entregas que los constituyen, pero sería un poco enredado prepararlos todos y oscurecería las explicaciones. Por eso he preparado un fichero llamado `episodios.rda` que tiene las diez entregas que conforman la primera serie de los Episodios nacionales de Benito Pérez Galdós. Los tienes de una forma un tanto especial: convertidos en diez objetos –`arapiles`, `bailen`, `cadiz`, `carlos4`, `empecinado`, `gerona`, `marzo_mayo`, `napoleon`, `trafalgar`, y `zaragoza`– en los que cada capítulo es un elemento (`39`, `32`, `35`, `28`, `33`, `27`, `30`, `29`, `17` y `32` respectivamente). Lo único que tienes que hacer buscarlo en la pestaña `Files`, tiene que estar en el directorio `datos`. Una vez ahí haz clic en `episodios.rda`. Aparecerá en el borde superior de la ventana de `RStudio` un mensaje como el de la figura 11.2. Haz clic en `Yes`.
+Al cargarse la librería `tidyverse`aparecerá un mensaje. No tienes que preocuparte de nada. Te  informa de la versión y de los paquetes que constituyen `tidyverse` y los pequeños conflictos que existen con otros paquetes. Nada importante.
+El siguiente paso es cargar el diccionario que va a usar. Se encuentra en un repositorio externo y lo puedes cargar con
 
-```{R 11-Sentimiento-02, echo = FALSE, out.width = '50%', fig.align='center', fig.cap = "Fig. 11.1. Aviso de carga de un fichero `RData`"}
-knitr::include_graphics("imagenes/11-Sentimiento-02.png")
-```
-
-En seguida aparecerán en la ventana **Global Enviroment** diez vectores de caracteres llamados `arapiles`, `bailen`, `cadiz`, `carlos4`, `empecinado`, `gerona`, `marzo_mayo`, `napoleon`, `trafalgar`, y `zaragoza`. Puedes verlo con solo teclear en la consola
-```{R eval=FALSE}
-trafalgar
+```{R}
+sentimientos <- read_tsv("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/diccionarios/sentimientos_2.txt",
+                         col_types = "cccn",
+                         locale = default_locale())
 ```
 
-Deberá aparecer todo el texto; cada elemento será un capítulo, y dentro del elemento estará todo el texto del capítulo sin formato ni marcas de párrafo.
-
-Ahora tienes que cargar dos diccionarios. Ahora haz lo mismo que antes con el fichero `diccionarios.rda`. Aparecerá la misma solicitud que antes. Pulsa `Yes`. Se cargará el fichero, solo que en esta ocasión no aparecerá en la subventana **Values**, como en el caso anterior, sino en la ventana **Data**. Ahí habrá dos tablas. Una llamada `sentimientos`, con 15452 observaciones y 4 variables y otra llamada `vacias_esp` con 765 observaciones.
+Esta orden necesita una pequeña explicación. La función `read_tsv()` permite leer una tabla cuyas columnas están separadas por tabuladores (_tab separated values_). El primer argumento es el fichero que contiene los datos. Con el argumento `col_types` le indicas que tipo de datos tiene cada una de las columnas de la tabla. Las tres primeras son caracteres, de ahí las tres `c`, la última tiene valores numéricos, por lo que le tienes que indicar `n`. El último argumento, `locale = default_locale()` es el repsonsable de que los ordenadores Windows no tengan problemas para leer las letras con diacríticos.
 
 Examina la tabla `sentimientos`. Escribe en la consola
 
@@ -62,46 +60,44 @@ Se trata de la versión reducida del diccionario de sentimientos que he desarrol
 
 La columna `palabra` contiene las diferentes palabras de cada uno de los diccionarios (el nombre de cada uno de ellos está recogido en la columna lexicon y puede ser `nrc`, `afinn` y `bing`). La columna valor es siempre `NA` para `nrc` y `bing`, y un valor numérico entre `-5` y `+5` para `afinn`. En cambio, `afinn` tiene siempre un valor `NA` en la columna sentimiento, mientras que en `bing` puede ser `negativo` o `positivo` y en `nrc` uno de estos diez valores: `positivo`, `negativo`, `ira`, `miedo`, `tristeza`, `disgusto`, `asombro`, `confianza`, `alegría`, `promonición`. Algunas palabras pueden tener en `nrc` varios valores, pero siempre relacionados. Fíjate en el cuadro anterior, `abandonar` está marcado como `miedo`, `negativo` y `tristeza`.
 
-La otra tabla, la llamada `vacias_es`, es, en realidad, la lista de palabras vacías que has utilizado en ocasiones anteriores. Nada nuevo.
-
-El sistema que te voy a presentar de análisis no es perfecto. Se basa en contar en el texto que se examina cuántas palabras tienen un valor positivo y cuántas lo tienen negativa y con eso se establece una valencia que puede ser positiva o negativa (si es cero es neutra). No tiene en cuenta los modificadores que pueden cambiar totalmente el sentido de una frase. Una frase como _La película no estuvo mal_ sería negativa porque no tiene en cuenta que el no cambia el sentido de mal y le daría un valor positivo. Y lo mismo cabría decir de _Eso no estuvo bien_. Sería positiva para la máquina porque solo contemplaría bien, positivo, pero el no lo cambia en algo negativo. Esto puede ser un problema cuando se examinan textos muy breves, como los tweets o reseñas de sitios como TripAdvisor o Booking, pero para textos más complejos, como son los literarios no supone un problema (Mohammad 2011: 106). Además, se puede mejorar la técnica con el uso de bigramas y coocurrencias que has visto en un capítulo anterior.
-
-## Manos a la obra
-
-Si no has jugueteado con lo que acabas de hacer, puedes proseguir, en caso contrario mi recomendación es que cierres `RStudio` e inicies una nueva sesión. A continuación carga las dos librerías necesarias:
+A continuación has de cargar una pequeña modificación de una de las funciones de `tidytext`. Lo tienes que hacer con `source`, que lo que hace es leer un script e interpretarlo como una función diseñada por el usuario. Cuando lo cargues, aparecerá en el la ventana **Environment** una división que dirá **Functions** y dentro de ella aparecerá `get_sentiments`. Esta es la función modificada para _burlar_ la que trae `tidytext` de serie.
 
 ```{R}
-library(tidyverse)
+source("https://raw.githubusercontent.com/7PartidasDigital/R-LINHD-18/master/get_sentiments.R")
 ```
 
-La consola te habrá respondido con lo que aparece en las tres cajas anteriores. No hay ningún problema. `tidyverse`, como ya te he contado, es un conjunto de librerías, por lo que que te ahorra cargarlas individualmente y que te olvides de alguna en algún momento.
-La tercera caja te informa de que hay algunos conflictos con algunos otros paquetes. Nada de lo que tengas que preocuparte. No te afectará.
+ ¡Ah! Cuando quieras analizar textos en inglés no cargues los diccionarios españoles ni `get_sentiments.R`. Utiliza los que trae de serie la librería `tidytext`. es decir, ignora los pasos anteriores.
+
+### Cargar los textos
+
+Ya tienes los dos elementos que necesitarás siempre que quieras hacer el análisis de sentimientos de un texto en español. Ahora tan solo tienes que cargar y preparar los textos de una manera especial. Vas a usar las diez entregas de la primera serie de los [Episodios Nacional](https://es.wikipedia.org/wiki/Episodios_nacionales#Primera_serie) de [Benito Pérez Galdós](https://es.wikipedia.org/wiki/Benito_P%C3%A9rez_Gald%C3%B3s).
+
+Puesto que se trata de diez ficheros lo primero que necesitas es la lista de los nombres de los ficheros, que guardarás en `ficheros`. Basta con un vector de caracteres con los nombres de mismos:
+
+Para cargar los diez ficheros no puedes usar un bucle `for` ya que te interesa mantener identificado cada uno de los episodios. Con lo que no hay otra que cargarlos uno a uno:
 
 ```{R}
-library(tidytext)
+trafalgar <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/01_EN-01-01-Trafalgar.txt", locale = default_locale())
+carlos4 <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/02_EN-01-02-La_Corte_de_Carlos_IV.txt", locale = default_locale())
+marzo_mayo <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/03_EN-01-03-El_19_de_Marzo_y_el_2_de_Mayo.txt", locale = default_locale())
+bailen <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/04_EN-01-04-Bailen.txt", locale = default_locale())
+napoleon <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/05_EN-01-05-Napoleon_en_Chamartin.txt", locale = default_locale())
+zaragoza <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/06_EN-01-06-Zaragoza.txt", locale = default_locale())
+gerona <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/07_EN-01-07-Gerona.txt", locale = default_locale())
+cadiz <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/08_EN-01-08-Cadiz.txt", locale = default_locale())
+empecinado <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/09_EN-01-09-Juan_Martin_El_Empecinado.txt", locale = default_locale())
+arapiles <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/10_EN-01-10-La_Batalla_de_los_Arapiles.txt", locale = default_locale())
 ```
 
-Ahora `episodios.rda` y `diccionarios.rda`, pero no como has hecho hasta ahora, sino con programación. Ambos están en el directorio `datos`:
+Cuando hayas acabado la carga, la ventana **Global Environment** tiene que tener un aspecto idéntico al de la figura 11.2.
 
-```{R}
-load("~/Dropbox/AnaText/datos/episodios.rda")
-load("~/Dropbox/AnaText/datos/diccionarios.rda")
+```{R 11-Sentimiento-02, echo = FALSE, out.width = '75%', fig.align='center', fig.cap = "Figura. 11.2. La ventana **Global Enviroment** una vez cargados el diccionario `sentimientos`, los diez episodios y la función `get_sentiments`"}
+knitr::include_graphics("imagenes/11_sentimientos_A.png")
 ```
 
-y por último el fichero `get_sentiments.R` que se encuentra en el directorio `codigo`:
+Estos textos están ligeramente preparados, pues he unido todos los párrafos y cada elemento de cada uno de los vectores contiene un capítulo. Fíjate que todos, menos `gerona` empiezan por _- I -_. `gerona`lo hace con _- Prólogo -_. Podrías haberlo hecho, pero habría sido enredar un tanto la explicación y quiero que te centres en el análisis de sentimientos.
 
-```{R}
-source("~/Dropbox/AnaText/codigo/get_sentiments.R")
-```
-Este pequeño fichero de `R` contiene la función `get_sementiments` del paquete `tidytext` ligeramente modificada para que puentee los diccionarios que trae incluidos `tidytext` puesto que son inútiles para analizar un texto en español ya que se diseñó para el mundo de habla inglés. Ya tienes el entorno preparado. El aspecto de la ventana **Global Environment** debe ser el de la figura 11.3. Cuando quieras analizar textos en inglés no cargues los diccionarios españoles ni `get_sentiments.R`. Utiliza los que trae de serie la librería tidytext.
-
-```{R 11-Sentimiento-03, echo = FALSE, out.width = '75%', fig.align='center', fig.cap = "La ventana **Global Enviroment** una vez cargados `episodios.rda`, `diccionarios.rda` y la función `get_sentiments()`"}
-knitr::include_graphics("imagenes/11-Sentimiento-03.png")
-```
-
-Ahora tienes que preparar los textos para poderle seguir la pista a cada una de las palabras que lo constituyen. Ya los has cargado por medio del fichero `episodios.rda`, pero, como te he explicado en la sección anterior, son vectores de caracteres y esos no son los mejores objetos de `R` para usar el sistema `tidydata`, con lo que hay que convertirlos en una `tibble`.
-
-Lo primero es crear un vector de caracteres con el título de cada entrega, llámalo, evidentemente, `titulo`. Créalo en el orden cronológico de publicación, así el análisis será mucho más interesante.
+El siguente paso es crear un vector de caracteres con el título de cada entrega, llámalo, evidentemente, `titulo`. Créalo en el orden cronológico de publicación, así el análisis será mucho más interesante.
 
 ```{R}
 titulos <- c("Trafalgar",
@@ -122,7 +118,7 @@ titulos <- c("Trafalgar",
 titulos <- c("Trafalgar", "La Corte de Carlos IV", "El 19 de Marzo y el 2 de Mayo", "Bailen", "Napoleon en Chamartin", "Zaragoza", "Gerona", "Cadiz", "Juan Martin El Empecinado", "La Batalla de los Arapiles")
 ```
 
-El siguiente paso es crear una lista, llamada `libros`, con todos los textos en el orden de publicación. Se crea con la función `list()` y cada uno de los elementos de la lista es cada uno de los vectores de caracteres que tienen el texto de cada entrega.
+Lo siguiente es crear una lista, llamada `libros`, con todos los textos en el orden de publicación. Se crea con la función `list()` y cada uno de los elementos de la lista es cada uno de los vectores de caracteres que tienen el texto de cada entrega.
 
 ```{R}
 libros <- list(trafalgar,
@@ -275,8 +271,7 @@ con lo que los títulos de la serie tendrán este orden:
 [9] "La Corte de Carlos IV" "Trafalgar"
 ```
 
-
-## Primeros análisis
+### Primeros análisis
 
 Ya tienes el material preparado. Una enorme tabla en la que están todas las palabras de las diez primeras novelas de los Episodios galdosianos. Es más, las sigues teniendo en el orden de lectura. Puedes comprobarlo con `serie$palabra[1:50]`. Si escribes esto en la consola
 
@@ -284,7 +279,7 @@ Ya tienes el material preparado. Una enorme tabla en la que están todas las pal
 serie$palabra[1:50]
 ```
 
-se imprimirán en la pantalla las 50 primeras palabras
+se imprimirán en la pantalla las 50 primeras palabras (aunque la primera será una _i_ que corresponde al número del capítulo)
 
 ```{R echo = FALSE}
 serie$palabra[1:50]
@@ -309,8 +304,6 @@ serie %>%
   filter(!is.na(sentimiento)) %>%
   count(sentimiento, sort = TRUE)
 ```
-
-
 
 ### Explicación de la orden
 
