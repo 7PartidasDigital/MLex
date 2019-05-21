@@ -1,13 +1,13 @@
 # La forma de las historias
 ## Introducción
 
-El análisis de sentimientos, también llamado minería de opinión, son en una serie de técnicas informáticas que se utilizan para clasificar automáticamente un texto con un sentimiento positivo o negativo (Pang y Lee 2008) e incluso con alguna de las emociones básicas (Plutchik 1980). Si ya es difícil conseguir que dos personas se pongan de acuerdo acerca de si un texto es más o menos positivo, más o menos negativo, puesto que pueden influir aspectos culturales y la experiencia anterior de cada uno de ellos, mucho más difícil es que un ordenador pueda establecerlo, pues para una máquina un texto cualquiera es una mera secuencia de ceros y unos. A pesar de ello, un ejército de ingenieros, de estadistas y algún que otro lingüista están invirtiendo cantidades ingentes de tiempo y dinero para conseguirlo, pues sus clientes pueden ganar o perder mucho dinero si no son capaces de adaptarse con prontitud ante la reacción del público ante una campaña de publicidad o la mala acogida de un producto, por ejemplo.
+El análisis de sentimientos, también llamado minería de opinión, es en una serie de técnicas informáticas que se utilizan para clasificar automáticamente un texto con un sentimiento positivo o negativo ([Pang y Lee 2008](http://www.cs.cornell.edu/home/llee/omsa/omsa.pdf)) e incluso con alguna de las emociones básicas ([Plutchik 1980](https://doi.org/10.1016/B978-0-12-558701-3.50007-7)). Si ya es difícil conseguir que dos personas se pongan de acuerdo acerca de si un texto es más o menos positivo, más o menos negativo, puesto que pueden influir aspectos culturales y la experiencia anterior de cada uno de ellos, mucho más difícil es que un ordenador pueda establecerlo, pues para una máquina un texto cualquiera es una mera secuencia de ceros y unos. A pesar de ello, un ejército de ingenieros, de estadistas y algún que otro lingüista están invirtiendo cantidades ingentes de tiempo y dinero para conseguirlo, pues sus clientes pueden ganar o perder mucho dinero si no son capaces de adaptarse con prontitud ante la reacción del público ante una campaña de publicidad o la mala acogida de un producto, por ejemplo.
 
 En la actualidad hay dos aproximaciones: la del **aprendizaje automático** (_machine learning_) que consiste en entrenar un clasificador usando un algoritmo de aprendizaje supervisado a partir de una colección de textos anotados, donde cada texto habitualmente se representa como una _bolsa de palabras_ (`BoP` o `BoW` = _bag of words_) o secuencia de palabras (_n-grams_), en combinación con otro tipo de características semánticas que intentan modelar la estructura sintáctica de las frases, la intensificación, la negación, la subjetividad o la ironía.
 
 El otro modo es el enfoque **semántico**. Este se caracteriza por el uso de diccionarios de términos o lexicones en los que cada palabra está marcada con una orientación semántica de polaridad u opinión. Estos sistemas, por lo general, lo que hacen es preprocesar el texto, para lo que lo dividen en palabras, pero como hay muchas que no tienen ningún valor, las llamadas palabras de función (artículos, conjunciones, preposiciones…), las eliminan comparando los textos contra una lista de palabras vacías (_stopwords_), y luego se ve si las palabras existen en el lexicón y qué valor de polaridad se les ha dado y, por medio de sumar y restar los valores positivos y negativos llega a establecerse una valencia para el sentimiento de un texto.
 
-Ante estas posibilidades, en Estados Unidos una serie de investigadores empezaron a preguntarse si era posible aplicar estas técnicas a los textos literarios y qué conclusiones se podía sacar de los resultados (Mohammad 2013; Archer & Jockers 2016: 108). Uno de los sistemas mejor desarrollados es de Mathew L. Jockers y el paquete `syuzhet` desarrollado en el lenguaje `R`, aunque este investigador lo hace dentro del ámbito de la teoría de la forma de las historias (cfr. el vídeo de [Kurt Vonnegut](https://youtu.be/oP3c1h8v2ZQ); Booker 2004) y le sirve para explicar en qué reside el éxito de novelas como _Cincuenta sombras de Grey_ y cuán similares son la trayectoria de su historia esta última y _El Código Da Vinci_ de Dan Brown (Archie & Jockers 2016) (figura 11.1).
+Ante estas posibilidades, en Estados Unidos una serie de investigadores empezaron a preguntarse si era posible aplicar estas técnicas a los textos literarios y qué conclusiones se podía sacar de los resultados ([Mohammad 2013](https://arxiv.org/abs/1309.5909); [Archer & Jockers 2016: 108](https://doi.org/10.1016/B978-0-12-558701-3.50007-7)). Uno de los sistemas mejor desarrollados es de Mathew L. Jockers y el paquete [`syuzhet`](https://cran.r-project.org/web/packages/syuzhet/index.html) desarrollado en el lenguaje `R`, aunque este investigador lo hace dentro del ámbito de la teoría de la forma de las historias (cfr. el vídeo de [Kurt Vonnegut](https://youtu.be/oP3c1h8v2ZQ); [Booker 2004](https://books.google.es/books?id=xmnOBAAAQBAJ)) y le sirve para explicar en qué reside el éxito de novelas como _Cincuenta sombras de Grey_ y cuán similares son la trayectoria de su historia esta última y _El Código Da Vinci_ de Dan Brown (Archie & Jockers 2016; figura 11.1).
 
 ```{R 11-Sentimiento-01, echo = FALSE, out.width = '50%', fig.align='center', fig.cap = "Figura 11.1. Trayectorias de _The Da Vinci Code_ y _Fifty Shades of Grey_ según los análisis de Archer & Jockers (2016: 106)"}
 knitr::include_graphics("imagenes/11-Sentimiento-01.jpg")
@@ -70,11 +70,9 @@ source("https://raw.githubusercontent.com/7PartidasDigital/R-LINHD-18/master/get
 
 ### Cargar los textos
 
-Ya tienes los dos elementos que necesitarás siempre que quieras hacer el análisis de sentimientos de un texto en español. Ahora tan solo tienes que cargar y preparar los textos de una manera especial. Vas a usar las diez entregas de la primera serie de los [Episodios Nacional](https://es.wikipedia.org/wiki/Episodios_nacionales#Primera_serie) de [Benito Pérez Galdós](https://es.wikipedia.org/wiki/Benito_P%C3%A9rez_Gald%C3%B3s).
+Ya tienes los dos elementos que necesitarás siempre que quieras hacer el análisis de sentimientos de un texto en español. Ahora tan solo tienes que cargar los textos. Vas a usar las diez entregas de la primera serie de los [Episodios Nacional](https://es.wikipedia.org/wiki/Episodios_nacionales#Primera_serie) de [Benito Pérez Galdós](https://es.wikipedia.org/wiki/Benito_P%C3%A9rez_Gald%C3%B3s).
 
-Puesto que se trata de diez ficheros lo primero que necesitas es la lista de los nombres de los ficheros, que guardarás en `ficheros`. Basta con un vector de caracteres con los nombres de mismos:
-
-Para cargar los diez ficheros no puedes usar un bucle `for` ya que te interesa mantener identificado cada uno de los episodios. Con lo que no hay otra que cargarlos uno a uno:
+En esta ocasión no puedes usar un bucle `for` ya que te interesa mantener identificado cada uno de los episodios. Así que no hay otra que cargarlos uno a uno:
 
 ```{R}
 trafalgar <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/episodios/01_EN-01-01-Trafalgar.txt", locale = default_locale())
@@ -95,9 +93,9 @@ Cuando hayas acabado la carga, la ventana **Global Environment** tiene que tener
 knitr::include_graphics("imagenes/11_sentimientos_A.png")
 ```
 
-Estos textos están ligeramente preparados, pues he unido todos los párrafos y cada elemento de cada uno de los vectores contiene un capítulo. Fíjate que todos, menos `gerona` empiezan por _- I -_. `gerona`lo hace con _- Prólogo -_. Podrías haberlo hecho, pero habría sido enredar un tanto la explicación y quiero que te centres en el análisis de sentimientos.
+Estos textos están ligeramente preparados, pues he unido todos los párrafos y cada elemento de cada uno de los vectores contiene un capítulo. Podrías haberlo hecho cargando los ficheros sin modificar, pero habría sido enredar un tanto la explicación y quiero que te centres en el análisis de sentimientos.
 
-El siguente paso es crear un vector de caracteres con el título de cada entrega, llámalo, evidentemente, `titulo`. Créalo en el orden cronológico de publicación, así el análisis será mucho más interesante.
+El siguente paso es crear un vector de caracteres con el título de cada entrega, llámalo, evidentemente, `titulo`. Créalo en el orden cronológico de publicación, así el análisis será mucho más interesante. Además, las máquinas tienen la tendencia a presentar las cosas en orden alfabético. Fíjate que cargaste los episodios en orden cronológico, pero en **Global Environment** los tienes en orden alfabético.
 
 ```{R}
 titulos <- c("Trafalgar",
@@ -118,7 +116,7 @@ titulos <- c("Trafalgar",
 titulos <- c("Trafalgar", "La Corte de Carlos IV", "El 19 de Marzo y el 2 de Mayo", "Bailen", "Napoleon en Chamartin", "Zaragoza", "Gerona", "Cadiz", "Juan Martin El Empecinado", "La Batalla de los Arapiles")
 ```
 
-Lo siguiente es crear una lista, llamada `libros`, con todos los textos en el orden de publicación. Se crea con la función `list()` y cada uno de los elementos de la lista es cada uno de los vectores de caracteres que tienen el texto de cada entrega.
+Lo siguiente es crear una lista, llamada `libros`, con todos los textos en el orden de publicación. Se crea con la función `list()` y cada uno de los elementos de la lista es cada uno de los vectores de caracteres que tienen el texto de cada episodio.
 
 ```{R}
 libros <- list(trafalgar,
@@ -133,7 +131,7 @@ libros <- list(trafalgar,
                arapiles)
 ```
 
-Ahora has de crear una gran tabla, llámala `serie`, con todos los textos, con los títulos, los números de capítulo de cada una de ellas y cada una de las palabras divididas en palabras-token, es decir, todas convertidas en letras minúsculas y sin ningún signo de puntuación. Como es una labor que se ha de llevar a cabo con un bucle `for`, lo primero es inicializar la `tibble`, que llamarás `serie`, que guardará todo el material.
+Ahora has de crear una gran tabla, que llamarás `serie`, con todos los textos, con los títulos, los números de capítulo de cada una de ellos y cada una de las palabras divididas en palabras-token, es decir, todas convertidas en letras minúsculas y sin ningún signo de puntuación. Como es una labor que se ha de llevar a cabo con un bucle `for`, lo primero es inicializar la `tibble`, que llamarás `serie`, que guardará todo el material.
 
 ```{R}
 serie <- tibble()
@@ -151,6 +149,8 @@ for(i in seq_along(titulos)) {
   serie <- rbind(serie, limpio)
 }
 ```
+
+#### Explicación del código
 
 Aunque ya es un viejo conocido, te explico qué hace en cada línea de cada iteración. El controlador de vueltas es la longitud de `titulos`. Podrías usar `length(titulos)`, pero también `seq_along()`, es decir, sigue dando vueltas mientras que haya elementos en `titulos`. En la primera línea, guardará en `limpio` el número de los capítulos –`capitulo`– y el `texto` de cada `capitulo` que haya en `libros[[i]]`[^2], donde es `i` es uno de los diez posibles, de manera que, por ejemplo, `libros[[1]]` es `Trafalgar`, el cual tiene 17 capítulos. El contenido de `limpio` en esta primera línea del bucle es (no lo podrás ver en la consola):
 
@@ -209,7 +209,7 @@ capitulo palabra libro
 # ... with 51,293 more rows
 ```
 
-Después la función `select()` se encarga de crear la tabla intermedia definitiva, la cual solo tendrá las tres columnas del paso anterior, pero reorganizadas: `libro`, que guarda el título, `capitulo`, que contiene el número de cada capítulo, y `palabra`, cada uno de las palabra-token que constituyen cada capítulo.
+Después la función `select()` se encarga de crear la tabla intermedia definitiva, la cual solo tendrá las tres columnas del paso anterior, pero reorganizadas: `libro`, que guarda el título; `capitulo`, que contiene el número de cada capítulo; y `palabra`, cada uno de las palabra-token que constituyen cada capítulo.
 
 ```
 # A tibble: 51,303 x 3
@@ -228,7 +228,7 @@ libro capitulo palabra
 # ... with 51,293 more rows
 ```
 
-Como en este caso tienes diez entregas, la última línea del bucle se encarga de añadir a la tabla `serie`, que creaste antes de comenzarlo, cada una de las diez tablas intermedias que se han ido generando secuencialmente en `limpio`. Al final, tienes las diez novelas, divididas en palabras-token con indicación del `titulo` y del `capitulo` en el que aparecen. Es más, podrías leer las diez novelas leyendo la columna `palabra`, pues aún mantiene el orden del texto original, solo ha perdido los signos de puntuación y las mayúsculas. Es una tabla bastante grande, tiene 685 889 filas (palabras-token). Si te has leído los diez primeros Episodios ya sabes cuántas palabras tienen en total.
+Como en este caso tienes diez entregas, la última línea del bucle se encarga de añadir a la tabla `serie`, que creaste antes de comenzarlo, cada una de las diez tablas intermedias que se han ido generando secuencialmente en `limpio`. Al final, tienes las diez novelas divididas en palabras-token con indicación del `titulo` y del `capitulo` en el que aparecen. Es más, podrías leer las diez novelas leyendo la columna `palabra`, pues aún mantiene el orden del texto original, solo ha perdido los signos de puntuación y las mayúsculas. Es una tabla bastante grande, tiene 685 889 filas (palabras-token). Si te has leído los diez primeros Episodios ya sabes cuántas palabras tienen en total.
 
 ```
 # A tibble: # A tibble: 685,889 x 3
@@ -246,6 +246,8 @@ libro capitulo palabra
 10 Trafalgar 1     suceso
 # ... with 685,879 more rows
 ```
+
+### Convertir en factores
 
 El último paso previo es convertir la columna de los títulos –`libro`– en un `factor`. Ya lo has visto varias veces. La tabla, como acabas de ver, tiene más de medio millón de líneas, pero en la columna `libro` solo tienes diez posibles valores: el título de cada entrega. Manejar diez valores es más sencillo que más de medio millón que se repiten tan solo diez veces. Los factores es la manera de hacerlo, por lo que vas a reducir ese medio millón largo de repeticiones a tan solo diez valores. Hay varias maneras de hacerlo. La más sencilla es indicándole a `R` qué columna de la tabla `serie` quieres convertir en factores. Ya lo has visto hace tiempo, usas el signo `$`, de modo que `serie$libro` solo tendrá en cuenta esa columna de la tabla `serie`. La forma de hacerlo es con la función `factor()` que requiere saber qué es lo que debe convertir en factor y qué niveles debe tener –`levels`– y cómo ordenarlos –`rev()`–, pues los factores se ordenan por defecto alfabéticamente:
 
@@ -305,7 +307,7 @@ serie %>%
   count(sentimiento, sort = TRUE)
 ```
 
-### Explicación de la orden
+#### Explicación de la orden
 
 La primera caja tras la del código imprime un `Warning`. No hay ningún problema. Este aviso te saldrá siempre que uses este sistema en español. Se debe a que ha buscado en la librería de `tidytext` los datos de `sentimientos`, y allí no los ha podido localizar porque no están ya que el paquete original no contempla la posibilidad de que se pueda hacer análisis de sentimiento en ninguna otra lengua. Sin embargo, los cargaste desde el fichero `.rda` y los tienes en **Global Enviroment**, por lo que seguirá funcionado. Tan solo te avisa de algo no ha ido como esperaba que fuera. En adelante no te mostraré este aviso, pero ten por seguro que a ti te saldrá.
 
@@ -341,6 +343,7 @@ serie %>%
 ```
 
 el resultado será una tabla de 2 por 2 que te informará de cuántas palabras positivas y cuántas negativas hay en todo el corpus. (Te habrá salido el `Warning` y el aviso de `Joining`).
+
 ```{R echo = FALSE, warning = FALSE, message = FALSE}
 serie %>%
   right_join(get_sentiments("bing")) %>%
@@ -350,7 +353,7 @@ serie %>%
 
 Si lo comparas con los resultados de `nrc`, `bing` es muy pobre. `nrc` fue capaz de detectar 34934 palabras positivas y 26809 palabras negativas. Esto se debe a que la versión del diccionario `bing` aquí implementada es mucho más pobre.
 
-## Visualización de los resultados
+### Visualización de los resultados
 
 En varias ocasiones he mencionado que no se ha reorganizado el texto de los diez episodios porque puede ser interesante ver cómo evoluciona la valoración de sentimientos a lo largo de la trayectoria narrativa de cada una de ellas. La mejor manera de verlo es por medio de una gráfica que genera este fragmento de código (la explicación está un poco más abajo).
 
@@ -371,7 +374,7 @@ serie %>%
 
 En el eje vertical tienes la valencia emocional de los diez primeros episodios. Como es de suponer, los valores positivos corresponden a sentimientos positivos y los negativos a los negativos, es una obviedad. El valor del eje horizontal indica el número de la página, establecida en secuencias consecutivas de 500 palabras, por lo que puedes ver cómo varía la carga emocional según progresa el texto.
 
-### Explicación del código
+#### Explicación del código
 
 Ahora vamos a ver qué es lo que sucede en cada paso hasta llegar al gráfico anterior. Lo primero es agrupar los datos, que están recogidos en `serie`, de cada uno de los Episodios, porque quieres establecer la carga o valencia emotiva de cada uno de los libros, no de la serie como un todo, por lo tanto, has de usar `group_by(libro)`. Este primer paso crea una tabla intermedia invisible, como la que hay a continuación, en la que se informa de que la agrupación de la variable libro es de 10:
 
@@ -408,7 +411,7 @@ Cualquiera de las dos ofrecerá el resultado
 ceiling(89629/500)
 ```
 
-El resultado intermedio de la función `mutate()`, no lo verás en la consola, es:
+El resultado intermedio de la función `mutate()`, que no verás en la consola, es:
 
 ```
 # A tibble: 685,889 x 5
@@ -466,7 +469,7 @@ Todas las palabras son del capítulo primero, de la primera página y tan solo l
 ```
 # A tibble: 13,738 x 4
 # Groups: libro [10]
-libro indice sentimiento n
+libro                       indice sentimiento n
   <fct>                      <dbl> <chr>     <int>
  1 La Batalla de los Arapiles 1    alegría     11
  2 La Batalla de los Arapiles 1    asombro      9
@@ -481,7 +484,7 @@ libro indice sentimiento n
 # … with 13,728 more rows
 ```
 
-Puedes ver que en la página 1 (`indice`) de _La batallas de Arapiles_ hay 24 palabras positivas y 17 negativas y, puedes ver, además, cuántas palabras que denotan alegría, confianza, disgusto, ira, miedo, promonición y tristeza. Puesto que ya has realizado los cálculos para cada `libro`, tienes que deshacerte del grupo con `ungroup()`.
+Puedes ver que en la página 1 (`indice`) de _La batallas de Arapiles_ hay 24 palabras positivas y 17 negativas y, puedes ver, además, cuántas palabras hay que denotan alegría, confianza, disgusto, ira, miedo, premonición y tristeza. Puesto que ya has realizado los cálculos para cada `libro`, tienes que deshacerte del grupo con `ungroup()`.
 
 La siguiente línea –`spread(sentimiento, n, fill = 0)`– lo que hace es crear una tabla en la que se resumen y recopilan los valores –`n`– de cada uno de los sentimientos –`sentimiento`– para cada página –`indice`– de cada una de las entregas de la serie –`libro`–. Puesto que puede haber sitios en los que no hay palabras para un sentimiento determinado y evitar que `R` introduzca un `NA`, que es el valor que asigna por defecto cuando faltan valores, usas el argumento `fill = 0`. De esta manera te aseguras de que después podrás hacer las operaciones matemáticas necesarias. El aspecto interno de esta tabla, que de nuevo no es visible, es:
 
@@ -491,18 +494,15 @@ knitr::include_graphics("imagenes/11-Sentimiento-04.png")
 
 Ahora va a realizar unos cálculos. Establecerá la valencia emocional de cada página. Lo hará restando a las palabras positivas –`positivo`– las negativas –`negativo`– y las va a guardar en la columna `sentimiento`. Además, va a reorganizar los títulos –`libro`– por orden de publicación –`levels = titulos`–. El aspecto de la tabla interna final, que pasará a `ggplot()` para dibujar la gráfica, es:
 
-
 ```{R 11-Sentimiento-05, echo = FALSE, out.width = '80%', fig.align='center'}
 knitr::include_graphics("imagenes/11-Sentimiento-05.jpg")
 ```
 
-Ya tienes los datos preparados para dibujar la gráfica. Puesto que lo que ofrece la tabla anterior son las diez primeras páginas de _La batalla de Arapiles_, entresaco el gráfico que acabará dibujando para este episodio (figura 11.3). Fíjate que las páginas 2, 3, 4 y 6 tienen una valencia negativa, lo que se refleja en la gráfica con barras descendentes, mientras que las paginas 1, 5, 7,8, 9 y 10 son todas positivas.
-
+Ya tienes los datos preparados para dibujar la gráfica. Puesto que lo que ofrece la tabla anterior son las diez primeras páginas de _La batalla de Arapiles_, entresaco el gráfico que acabará dibujando para este episodio (figura 11.3). Fíjate que las páginas 2, 3, 4 y 6 tienen una valencia negativa, lo que se refleja en la gráfica con barras descendentes, mientras que las paginas 1, 5, 7, 8, 9 y 10 son todas positivas.
 
 ```{R 11-Sentimiento-06, echo = FALSE, out.width = '80%', fig.align='center', fig.cap = "Fig. 11.3. Evolución del sentimiento en _La batalla de Arapiles_"}
 knitr::include_graphics("imagenes/11-Sentimiento-06.jpg")
 ```
-
 
 El dibujo la gráfica para cada uno de los diez episodios se encargaron las tres últimas líneas de esta larga orden
 
@@ -549,13 +549,15 @@ serie %>%
 
 La última línea es la que se encarga de montar en una sola gráfica los diez gráficos y así poder comparar con facilidad. El último argumento `scales = "free_x"` es para que estreche aquellas gráficas cuyos valores del eje horizontal vayan más allá del que ofrezca en menor número de valores. En este caso, _Trafalgar_ tiene menos páginas que _La batalla de Arapiles_, que tiene más de 175 (en realidad 180).
 
-## Unos resultados más
-Te estarás preguntando, pero cuáles son las palabras que más contribuyen al sentimiento de la serie. Lo vamos a averiguar con el diccionario bing, aunque es un poco más pobre. Todo se reduce a establecer qué palabras son las que se consideran positivas y cuáles negativas. Ya lo has hecho antes. Así que reutiliza un poco de código:
+### Unos resultados más
+Te estarás preguntando, pero cuáles son las palabras que más contribuyen al sentimiento de la serie. Lo vas a averiguar con el diccionario `bing`, aunque es un poco más pobre. Todo se reduce a establecer qué palabras son las que se consideran positivas y cuáles negativas. Ya lo has hecho antes. Así que reutiliza un poco de código:
+
 ```{R message = FALSE, warning = FALSE}
 recuenta_palabras_bing <- serie %>%
   inner_join(get_sentiments("bing")) %>%
   count(palabra, sentimiento, sort = TRUE)
 ```
+
 Esta orden creará una tabla llamada `recuenta_palabras_bing` con tres columnas: `palabra`, `sentimiento` y `n`. En la primera tendrás las palabras, en la segunda si la considera positiva o negativa y en la última el número de veces que aparece cada una de ellas. Puedes ver el resultado, tan solo el comienzo, si escribes en la consola
 
 ```{R eval = FALSE}
@@ -563,7 +565,6 @@ recuenta_palabras_bing
 ```
 
 que responderá con la parta inicial de la tabla:
-
 
 ```{R echo = FALSE}
 recuenta_palabras_bing 
