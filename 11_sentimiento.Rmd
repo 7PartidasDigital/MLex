@@ -13,13 +13,13 @@ Ante estas posibilidades, en Estados Unidos una serie de investigadores empezaro
 knitr::include_graphics("imagenes/11-Sentimiento-01.jpg")
 ```
 
-El sistema que te voy a presentar de análisis no es perfecto. Se basa en contar en el texto que se examina cuántas palabras tienen un valor positivo y cuántas lo tienen negativa y con eso se establece una valencia que puede ser positiva o negativa (si es cero es neutra). No tiene en cuenta los modificadores que pueden cambiar totalmente el sentido de una frase. Una frase como _La película no estuvo mal_ sería negativa porque no tiene en cuenta que el no cambia el sentido de mal y le daría un valor positivo. Y lo mismo cabría decir de _Eso no estuvo bien_. Sería positiva para la máquina porque solo contemplaría bien, positivo, pero el no lo cambia en algo negativo. Esto puede ser un problema cuando se examinan textos muy breves, como los tweets o reseñas de sitios como TripAdvisor o Booking, pero para textos más complejos, como son los literarios no supone un problema (Mohammad 2011: 106). Además, se puede mejorar la técnica con el uso de bigramas y coocurrencias que has visto en un capítulo anterior.
+El sistema que te voy a presentar de análisis no es perfecto. Se basa en contar en el texto que se examina cuántas palabras tienen un valor positivo y cuántas lo tienen negativa y con eso se establece una valencia que puede ser positiva o negativa (si es cero es neutra). No tiene en cuenta los modificadores que pueden cambiar totalmente el sentido de una frase. Una frase como _La película no estuvo mal_ sería negativa porque no tiene en cuenta que el no cambia el sentido de mal y le daría un valor positivo. Y lo mismo cabría decir de _Eso no estuvo bien_. Sería positiva para la máquina porque solo contemplaría bien, positivo, pero el no lo cambia en algo negativo. Esto puede ser un problema cuando se examinan textos muy breves, como tweets o reseñas de sitios como TripAdvisor o Booking  o de crítica de cine y novelas, pero para textos más complejos, como son los literarios no supone un problema (Mohammad 2011: 106). Además, se puede mejorar la técnica con el uso de bigramas y coocurrencias.
 
 
 ## Análisis de sentimientos en español
 ### Preparar el entorno
 
-Hasta donde sabemos, en español no se ha aplicado el análisis de sentimientos a textos literarios por el sencillo hecho de que no hay diccionarios disponibles ni investigadores interesados en el tema. Sin embargo, en [7PartidasDigital](https://7partidas.hypotheses.org/) hemos adaptado (traducido) al español los que tiene la librería tidytext que estás utilizando en este curso (Fradejas Rueda, en prensa) y creado otro que designamos `uva`.
+Hasta donde sabemos, en español no se ha aplicado el análisis de sentimientos a textos literarios por el sencillo hecho de que no hay diccionarios disponibles ni investigadores interesados en el tema. Sin embargo, en [7PartidasDigital](https://7partidas.hypotheses.org/) hemos adaptado (traducido) al español los que tiene la librería `tidytext` que estás utilizando en este curso (Fradejas Rueda, en prensa) y creado otro que designamos `uva`.
 
 Te voy a mostrar cómo hacer un análisis de sentimientos aplicado a textos literarios, aunque será muy básico. Todo el material que necesitas lo puedes cargar desde el repositorio del proyecto, así no habrá problemas con las letras que lleven diacríticos, un auténtico martirio en Windows.
 
@@ -33,8 +33,9 @@ library(tidytext)
 library(tidyverse)
 library(tidytext)
 ```
-Al cargarse la librería `tidyverse`aparecerá un mensaje. No tienes que preocuparte de nada. Te  informa de la versión y de los paquetes que constituyen `tidyverse` y los pequeños conflictos que existen con otros paquetes. Nada importante.
-El siguiente paso es cargar el diccionario que va a usar. Se encuentra en un repositorio externo y lo puedes cargar con
+Al cargarse la librería `tidyverse`aparecerán los mensajes qnteriores. No tienes que preocuparte de nada. Te  informan de la versión y de los paquetes que constituyen `tidyverse` y los pequeños conflictos que existen con otras librerías. Nada importante.
+
+El siguiente paso es cargar el diccionario que vas a usar. Se encuentra en un repositorio externo y lo tienes que cargar con
 
 ```{R}
 sentimientos <- read_tsv("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/diccionarios/sentimientos_2.txt",
@@ -58,9 +59,9 @@ sentimientos
 
 Se trata de la versión reducida del diccionario de sentimientos que he desarrollado para usarlo con el paquete `tidytext`. Es una tabla que tiene cuatro columnas: `palabra`, `sentimiento`, `lexicon` y `valor`. En realidad, hay tres diccionarios diferentes construidos de manera diferente y con diferente número de palabras[^1].
 
-La columna `palabra` contiene las diferentes palabras de cada uno de los diccionarios (el nombre de cada uno de ellos está recogido en la columna lexicon y puede ser `nrc`, `afinn` y `bing`). La columna valor es siempre `NA` para `nrc` y `bing`, y un valor numérico entre `-5` y `+5` para `afinn`. En cambio, `afinn` tiene siempre un valor `NA` en la columna sentimiento, mientras que en `bing` puede ser `negativo` o `positivo` y en `nrc` uno de estos diez valores: `positivo`, `negativo`, `ira`, `miedo`, `tristeza`, `disgusto`, `asombro`, `confianza`, `alegría`, `promonición`. Algunas palabras pueden tener en `nrc` varios valores, pero siempre relacionados. Fíjate en el cuadro anterior, `abandonar` está marcado como `miedo`, `negativo` y `tristeza`.
+La columna `palabra` contiene las diferentes palabras de cada uno de los diccionarios (el nombre de cada uno de ellos está recogido en la columna lexicon y puede ser `nrc`, `afinn` y `bing`). La columna valor es siempre `NA` para `nrc` y `bing`, y un valor numérico entre `-5` y `+5` para `afinn`. En cambio, `afinn` tiene siempre un valor `NA` en la columna sentimiento, mientras que en `bing` puede ser `negativo` o `positivo` y en `nrc` uno de estos diez valores: `positivo`, `negativo`, `ira`, `miedo`, `tristeza`, `disgusto`, `asombro`, `confianza`, `alegría`, `premonición`. Algunas palabras pueden tener en `nrc` varios valores, pero siempre relacionados. Fíjate en el cuadro anterior, `abandonar` está marcado como `miedo`, `negativo` y `tristeza`.
 
-A continuación has de cargar una pequeña modificación de una de las funciones de `tidytext`. Lo tienes que hacer con `source`, que lo que hace es leer un script e interpretarlo como una función diseñada por el usuario. Cuando lo cargues, aparecerá en el la ventana **Environment** una división que dirá **Functions** y dentro de ella aparecerá `get_sentiments`. Esta es la función modificada para _burlar_ la que trae `tidytext` de serie.
+A continuación has de cargar una pequeña modificación de una de las funciones de `tidytext`. Lo tienes que hacer con `source`. Lo que hace esta orden es leer un script e interpretarlo como una función diseñada por el usuario. Cuando lo cargues, aparecerá en el la ventana **Environment** una división que dirá **Functions** y dentro de ella aparecerá `get_sentiments`. Esta es la función modificada para _burlar_ la que trae `tidytext` de serie.
 
 ```{R}
 source("https://raw.githubusercontent.com/7PartidasDigital/R-LINHD-18/master/get_sentiments.R")
@@ -93,9 +94,9 @@ Cuando hayas acabado la carga, la ventana **Global Environment** tiene que tener
 knitr::include_graphics("imagenes/11_sentimientos_A.png")
 ```
 
-Estos textos están ligeramente preparados, pues he unido todos los párrafos y cada elemento de cada uno de los vectores contiene un capítulo. Podrías haberlo hecho cargando los ficheros sin modificar, pero habría sido enredar un tanto la explicación y quiero que te centres en el análisis de sentimientos.
+Los textos están que acabas de cargar están ligeramente preparados. Se han unido todos los párrafos y cada elemento de cada uno de los vectores contiene un capítulo. Podrías haber cargando los textos sin modificar, pero habría exigido hacerlo, y eso habría complicado la explicación y quiero que te centres en el análisis de sentimientos.
 
-El siguente paso es crear un vector de caracteres con el título de cada entrega, llámalo, evidentemente, `titulo`. Créalo en el orden cronológico de publicación, así el análisis será mucho más interesante. Además, las máquinas tienen la tendencia a presentar las cosas en orden alfabético. Fíjate que cargaste los episodios en orden cronológico, pero en **Global Environment** los tienes en orden alfabético.
+El siguente paso es crear un vector de caracteres con el título de cada entrega. Llámalo `titulo`. Créalo en el orden cronológico de publicación, así el análisis será mucho más interesante. Recuerda que las máquinas tienen la tendencia a presentar las palabras en orden alfabético. Fíjate que cargaste los episodios en orden cronológico, pero en **Global Environment** los tienes en orden alfabético.
 
 ```{R}
 titulos <- c("Trafalgar",
@@ -131,7 +132,7 @@ libros <- list(trafalgar,
                arapiles)
 ```
 
-Ahora has de crear una gran tabla, que llamarás `serie`, con todos los textos, con los títulos, los números de capítulo de cada una de ellos y cada una de las palabras divididas en palabras-token, es decir, todas convertidas en letras minúsculas y sin ningún signo de puntuación. Como es una labor que se ha de llevar a cabo con un bucle `for`, lo primero es inicializar la `tibble`, que llamarás `serie`, que guardará todo el material.
+Ahora has de crear una gran tabla, que llamarás `serie`, con todos los textos, con los títulos, los números de capítulo de cada una de ellos y con los textos divididos en palabras-token, es decir, todas convertidas en letras minúsculas y sin ningún signo de puntuación. Como es una labor que se ha de llevar a cabo con un bucle `for`, lo primero es inicializar la `tibble`, que llamarás `serie`, que guardará todo el material.
 
 ```{R}
 serie <- tibble()
@@ -150,81 +151,82 @@ for(i in seq_along(titulos)) {
 }
 ```
 
+
 #### Explicación del código
 
-Aunque ya es un viejo conocido, te explico qué hace en cada línea de cada iteración. El controlador de vueltas es la longitud de `titulos`. Podrías usar `length(titulos)`, pero también `seq_along()`, es decir, sigue dando vueltas mientras que haya elementos en `titulos`. En la primera línea, guardará en `limpio` el número de los capítulos –`capitulo`– y el `texto` de cada `capitulo` que haya en `libros[[i]]`[^2], donde es `i` es uno de los diez posibles, de manera que, por ejemplo, `libros[[1]]` es `Trafalgar`, el cual tiene 17 capítulos. El contenido de `limpio` en esta primera línea del bucle es (no lo podrás ver en la consola):
+Aunque ya es un viejo conocido, te explico qué hace en cada línea de cada iteración. El controlador de vueltas es la longitud de `titulos`. Podrías usar `length(titulos)`, pero también `seq_along()`, lo que equivale a decir: sigue dando vueltas mientras que haya elementos en `titulos`. En la primera línea, guardará en `limpio` el número de los capítulos –`capitulo`– y el `texto` de cada `capitulo` que haya en `libros[[i]]`[^2], donde es `i` es uno de los diez posibles, de manera que, por ejemplo, `libros[[1]]` es `Trafalgar`, el cual tiene 17 capítulos. El contenido de `limpio` en esta primera línea del bucle es (no lo podrás ver en la consola):
 
 ```
 # A tibble: 17 x 2
-capitulo texto
-  <int> <chr>
- 1    1 "Se me permitirá que antes de referir el gran suceso…
- 2    2 "En uno de los primeros días de Octubre de aquel año…
- 3    3 "D. Alonso Gutiérrez de Cisniega pertenecía a una an…
- 4    4 "«Señor Marcial –dijo ésta con redoblado furor: –si …
- 5    5 "Para oponerse a la insensata determinación de su ma…
- 6    6 "Recuerdo muy bien que al día siguiente de los pesco…
- 7    7 "A la mañana siguiente se me preparaba una gran sorp…
- 8    8 "No puedo describir el entusiasmo que despertó en mi…
- 9    9 "Octubre era el mes, y 18 el día. De esta fecha no m…
-10   10 "Al amanecer del día 20, el viento soplaba con mucha…
+    capitulo texto
+      <int>  <chr>
+ 1    1      "Se me permitirá que antes de referir el gran suceso…
+ 2    2      "En uno de los primeros días de Octubre de aquel año…
+ 3    3      "D. Alonso Gutiérrez de Cisniega pertenecía a una an…
+ 4    4      "«Señor Marcial –dijo ésta con redoblado furor: –si …
+ 5    5      "Para oponerse a la insensata determinación de su ma…
+ 6    6      "Recuerdo muy bien que al día siguiente de los pesco…
+ 7    7      "A la mañana siguiente se me preparaba una gran sorp…
+ 8    8      "No puedo describir el entusiasmo que despertó en mi…
+ 9    9      "Octubre era el mes, y 18 el día. De esta fecha no m…
+10   10      "Al amanecer del día 20, el viento soplaba con mucha…
 # ... with 7 more rows
 ```
 
-En la siguiente línea lo que hace es dividir el texto del libro en palabras-token. Con lo que el contenido de `limpio` ahora en una tabla con el número de capítulo y cada una de las palabras del `libro[[i]]`.
+La siguiente línea lo que hace es dividir el texto del libro en palabras-token. Con lo que el contenido de `limpio` ahora es en una tabla con el número de capítulo y cada una de las palabras del `libro[[i]]`.
 
 ```
 # A tibble: 51,303 x 2
-capitulo palabra
-  <int> <chr>
- 1 1   se
- 2 1   me
- 3 1   permitirá
- 4 1   que
- 5 1   antes
- 6 1   de
- 7 1   referir
- 8 1   el
- 9 1   gran
-10 1   suceso
+  capitulo   palabra
+  <int>      <chr>
+ 1   1       se
+ 2   1       me
+ 3   1       permitirá
+ 4   1       que
+ 5   1       antes
+ 6   1       de
+ 7   1       referir
+ 8   1       el
+ 9   1       gran
+10   1       suceso
 # ... with 51,293 more rows
 ```
 
-En la siguiente la función `mutate()` crea una nueva columna llamada `libro`, que contendrá el título del episodio y lo extraerá del vector `titulos`.
+En la siguiente, la función `mutate()` crea una nueva columna llamada `libro`, que contendrá el título del episodio y lo extraerá del vector `titulos`.
 
 ```
 # A tibble: 51,303 x 3
-capitulo palabra libro
- <int>  <chr>    <chr>
- 1   1  se        Trafalgar
- 2   1  me        Trafalgar
- 3   1  permitirá Trafalgar
- 4   1  que       Trafalgar
- 5   1  antes     Trafalgar
- 6   1  de        Trafalgar
- 7   1  referir   Trafalgar
- 8   1  el        Trafalgar
- 9   1  gran      Trafalgar
-10   1  suceso    Trafalgar
+    capitulo  palabra   libro
+    <int>     <chr>     <chr>
+ 1   1        se        Trafalgar
+ 2   1        me        Trafalgar
+ 3   1        permitirá Trafalgar
+ 4   1        que       Trafalgar
+ 5   1        antes     Trafalgar
+ 6   1        de        Trafalgar
+ 7   1        referir   Trafalgar
+ 8   1        el        Trafalgar
+ 9   1        gran      Trafalgar
+10   1        suceso    Trafalgar
 # ... with 51,293 more rows
 ```
 
-Después la función `select()` se encarga de crear la tabla intermedia definitiva, la cual solo tendrá las tres columnas del paso anterior, pero reorganizadas: `libro`, que guarda el título; `capitulo`, que contiene el número de cada capítulo; y `palabra`, cada uno de las palabra-token que constituyen cada capítulo.
+Después la función `select()` se encarga de crear la tabla intermedia definitiva, la cual solo tendrá las tres columnas del paso anterior, pero reorganizadas: `libro`, que guarda el título; `capitulo`, que contiene el número de cada capítulo; y `palabra`, cada una de las palabras-token que constituyen cada capítulo.
 
 ```
 # A tibble: 51,303 x 3
-libro capitulo palabra
-  <fct>    <int> <chr>
- 1 Trafalgar 1   se
- 2 Trafalgar 1   me
- 3 Trafalgar 1   permitirá
- 4 Trafalgar 1   que
- 5 Trafalgar 1   antes
- 6 Trafalgar 1   de
- 7 Trafalgar 1   referir
- 8 Trafalgar 1   el
- 9 Trafalgar 1   gran
-10 Trafalgar 1   suceso
+    libro     capitulo  palabra
+    <chr>    <int>      <chr>
+ 1  Trafalgar 1         se
+ 2  Trafalgar 1         me
+ 3  Trafalgar 1         permitirá
+ 4  Trafalgar 1         que
+ 5  Trafalgar 1         antes
+ 6  Trafalgar 1         de
+ 7  Trafalgar 1         referir
+ 8  Trafalgar 1         el
+ 9  Trafalgar 1         gran
+10  Trafalgar 1         suceso
 # ... with 51,293 more rows
 ```
 
@@ -233,7 +235,7 @@ Como en este caso tienes diez entregas, la última línea del bucle se encarga d
 ```
 # A tibble: # A tibble: 685,889 x 3
 libro capitulo palabra
-  <fct>      <int> <chr>
+  <chr>      <int> <chr>
  1 Trafalgar 1     se
  2 Trafalgar 1     me
  3 Trafalgar 1     permitirá
@@ -247,9 +249,9 @@ libro capitulo palabra
 # ... with 685,879 more rows
 ```
 
-### Convertir en factores
+#### Convertir en factores
 
-El último paso previo es convertir la columna de los títulos –`libro`– en un `factor`. Ya lo has visto varias veces. La tabla, como acabas de ver, tiene más de medio millón de líneas, pero en la columna `libro` solo tienes diez posibles valores: el título de cada entrega. Manejar diez valores es más sencillo que más de medio millón que se repiten tan solo diez veces. Los factores es la manera de hacerlo, por lo que vas a reducir ese medio millón largo de repeticiones a tan solo diez valores. Hay varias maneras de hacerlo. La más sencilla es indicándole a `R` qué columna de la tabla `serie` quieres convertir en factores. Ya lo has visto hace tiempo, usas el signo `$`, de modo que `serie$libro` solo tendrá en cuenta esa columna de la tabla `serie`. La forma de hacerlo es con la función `factor()` que requiere saber qué es lo que debe convertir en factor y qué niveles debe tener –`levels`– y cómo ordenarlos –`rev()`–, pues los factores se ordenan por defecto alfabéticamente:
+El último paso previo es convertir la columna de los títulos –`libro`– en un `factor` (`<fct>`). La tabla, como acabas de ver, tiene más de medio millón de líneas, pero en la columna `libro` solo tienes diez posibles valores: el título de cada entrega. Manejar diez valores es más sencillo que más de medio millón que se repiten tan solo diez veces. Los factores es la manera de hacerlo, por lo que vas a reducir ese medio millón largo de repeticiones a tan solo diez valores. Hay varias maneras de hacerlo. La más sencilla es indicándole a `R` qué columna de la tabla `serie` quieres convertir en factores. Ya lo has visto hace tiempo, usas el signo `$` para referirte a un columna determinada de una tabla, de modo que `serie$libro` solo tendrá en cuenta la columna `libro` de la tabla `serie`. La forma de convertir la columna en un factor es con la función `factor()` que requiere saber qué es lo que debe convertir en factor y qué niveles debe tener –`levels`– y cómo ordenarlos –`rev()`–, pues los factores se ordenan por defecto alfabéticamente:
 
 ```
 [1] "Bailen" "Cadiz"
@@ -281,13 +283,13 @@ Ya tienes el material preparado. Una enorme tabla en la que están todas las pal
 serie$palabra[1:50]
 ```
 
-se imprimirán en la pantalla las 50 primeras palabras (aunque la primera será una _i_ que corresponde al número del capítulo)
+se imprimirán en la pantalla las 50 primeras palabras.
 
 ```{R echo = FALSE}
 serie$palabra[1:50]
 ```
 
-Pero esto no dice nada. No te has tomado todo este trabajo para mal leer el texto. Sin embargo, antes de continuar es necesario que sepas el motivo por el cuál no se ha reorganizado el texto: a lo largo de estos análisis te interesará el tiempo narrativo, ver cómo progresa el relato y cómo cambia la carga emocional del texto.
+Pero esto no dice nada. No te has tomado todo este trabajo para leer de mala manera el texto. Sin embargo, antes de continuar es necesario que sepas el motivo por el cuál no se ha reorganizado el texto: a lo largo de estos análisis te interesará el tiempo narrativo, es decir, ver cómo progresa el relato y cómo cambia la carga emocional del texto.
 
 Lo primero que vas a ver es cuántas palabras positivas y cuántas negativas hay en toda esta primera serie de los Episodios nacionales. Vas a utilizar el diccionario `nrc`. La ventaja de este es que, además de palabras positivas y negativas, indicará las palabras que transmiten alguna de las ocho emociones básicas. El código es:
 
@@ -307,13 +309,16 @@ serie %>%
   count(sentimiento, sort = TRUE)
 ```
 
+
 #### Explicación de la orden
 
-La primera caja tras la del código imprime un `Warning`. No hay ningún problema. Este aviso te saldrá siempre que uses este sistema en español. Se debe a que ha buscado en la librería de `tidytext` los datos de `sentimientos`, y allí no los ha podido localizar porque no están ya que el paquete original no contempla la posibilidad de que se pueda hacer análisis de sentimiento en ninguna otra lengua. Sin embargo, los cargaste desde el fichero `.rda` y los tienes en **Global Enviroment**, por lo que seguirá funcionado. Tan solo te avisa de algo no ha ido como esperaba que fuera. En adelante no te mostraré este aviso, pero ten por seguro que a ti te saldrá.
+La primera caja tras la del código imprime un `Warning`. No hay ningún problema. Este aviso te saldrá siempre que uses este sistema en español. Se debe a que ha buscado en la librería de `tidytext` los datos de `sentimientos`, y allí no los ha podido localizar porque no están ya que el paquete original no contempla la posibilidad de que se pueda hacer análisis de sentimiento en ninguna otra lengua. Sin embargo, los cargaste desde el fichero al principio en `sentimientos` y los tienes en **Global Enviroment**, por lo que el sistema seguirá funcionado. Tan solo te avisa de algo no ha ido como esperaba que fuera. En adelante no te mostraré este aviso, pero ten por seguro que a ti te saldrá.
 
-La segunda caja te informa de que la función `rigth_join`se ha ejecutado con la variable `palabra` porque es la única variable –columna– que tienen en común `serie` y `sentimiento`. Siempre que uses la funciones `_join` aparecerá este aviso. En adelante tampoco te mostraré este aviso.
+La segunda caja informa de que la función `rigth_join` se ha ejecutado con la variable `palabra` porque es la única variable –columna– que tienen en común `serie` y `sentimiento`. Siempre que uses las funciones `_join` aparecerá este aviso. En adelante tampoco te mostraré este aviso, pero a ti te aparecerá en la consola.
 
-La tercera caja es el resultado. Lo que ha hecho el fragmento de código ha sido tomar el contenido del diccionario `nrc` y ver si la palabra se encuentra entre las palabras de `serie`. Si `serie` no tiene esa palabra, la añade, provisionalmente, a la tabla, e indica que no la hay con `NA`, tanto en `libro` como en capitulo, e incorpora a la derecha una nueva columna (`rigth_join`) con el `sentimiento` que esa palabra tenga marcado en `nrc`. El contenido, tras ejecutar la segunda línea –`right_join(get_sentiments("nrc"))`–, de la tabla provisional es:
+La tercera caja es el resultado final.
+
+Lo que ha hecho el fragmento de código ha sido tomar el contenido del diccionario `nrc` y ver si la palabra se encuentra entre las palabras de `serie`. Si `serie` no tiene esa palabra, la añade, provisionalmente, a la tabla, e indica que no la hay con `NA`, tanto en `libro` como en capitulo, e incorpora a la derecha una nueva columna (`rigth_join`) con el `sentimiento` que esa palabra tenga marcado en `nrc`. El contenido, tras ejecutar la segunda línea –`right_join(get_sentiments("nrc"))`–, de la tabla provisional es:
 
 ```
 A tibble: 174,367 x 4
@@ -331,7 +336,7 @@ A tibble: 174,367 x 4
 … with 174,357 more rows
 ```
 
-La línea de `filter()` lo que le dice es que solo tome aquellas filas cuyo contenido en la columna `sentimiento` sea diferente de `NA` –`!is.na`–. La última línea, `count()`, lo que hace es contar cuántas veces aparece cada una de los sentimientos en la columna `sentimiento` y ordenarlas de mayor a menor de acuerdo con el número de ocurrencias –`sort = TRUE`–. El resultado con el diccionario `nrc` lo has visto un poco antes.
+La línea de `filter()` lo que le dice es que solo tome aquellas filas cuyo contenido en la columna `sentimiento` sea diferente de `NA` –`!is.na`–. La última línea, `count()` cuenta cuántas veces aparece cada uno de los sentimientos en la columna `sentimiento` y ordenarlas de mayor a menor de acuerdo con el número de ocurrencias –`sort = TRUE`–. El resultado con el diccionario `nrc` lo has visto un poco antes.
 
 Si cambias el argumento de `get_sentiments()` de `nrc` a `bing`
 
@@ -342,7 +347,7 @@ serie %>%
   count(sentimiento, sort = TRUE)
 ```
 
-el resultado será una tabla de 2 por 2 que te informará de cuántas palabras positivas y cuántas negativas hay en todo el corpus. (Te habrá salido el `Warning` y el aviso de `Joining`).
+el resultado será una tabla de 2 por 2 que te informará, tan solo, de cuántas palabras positivas y cuántas negativas hay en todo el corpus. (Te habrá salido el `Warning` y el aviso de `Joining`).
 
 ```{R echo = FALSE, warning = FALSE, message = FALSE}
 serie %>%
@@ -351,11 +356,11 @@ serie %>%
   count(sentimiento, sort = TRUE)
 ```
 
-Si lo comparas con los resultados de `nrc`, `bing` es muy pobre. `nrc` fue capaz de detectar 34934 palabras positivas y 26809 palabras negativas. Esto se debe a que la versión del diccionario `bing` aquí implementada es mucho más pobre.
+Si lo comparas con los resultados de `nrc`, `bing` es muy pobre. `nrc` fue capaz de detectar 34934 palabras positivas y 26809 negativas. Esto se debe a que la versión del diccionario `bing` aquí implementada es mucho más pobre.
 
 ### Visualización de los resultados
 
-En varias ocasiones he mencionado que no se ha reorganizado el texto de los diez episodios porque puede ser interesante ver cómo evoluciona la valoración de sentimientos a lo largo de la trayectoria narrativa de cada una de ellas. La mejor manera de verlo es por medio de una gráfica que genera este fragmento de código (la explicación está un poco más abajo).
+En varias ocasiones he mencionado que no se ha reorganizado el texto de los diez episodios porque puede ser interesante ver cómo evoluciona la valoración del sentimiento a lo largo de la trayectoria narrativa de cada una de ellas. La mejor manera de verlo es por medio de una gráfica que genera este fragmento de código (la explicación está un poco más abajo).
 
 ```{R, warning = FALSE, message = FALSE}
 serie %>%
@@ -372,7 +377,7 @@ serie %>%
   facet_wrap(~ libro, ncol = 2, scales = "free_x")
 ```
 
-En el eje vertical tienes la valencia emocional de los diez primeros episodios. Como es de suponer, los valores positivos corresponden a sentimientos positivos y los negativos a los negativos, es una obviedad. El valor del eje horizontal indica el número de la página, establecida en secuencias consecutivas de 500 palabras, por lo que puedes ver cómo varía la carga emocional según progresa el texto.
+En el eje vertical tienes la valencia emocional de los diez primeros episodios. Como es de suponer, los valores positivos corresponden a sentimientos positivos y los negativos a los negativos. El valor del eje horizontal indica el número de la página, establecida en secuencias consecutivas de 500 palabras, por lo que puedes ver cómo varía la carga emocional según progresa el texto.
 
 #### Explicación del código
 
@@ -381,22 +386,22 @@ Ahora vamos a ver qué es lo que sucede en cada paso hasta llegar al gráfico an
 ```
 # A tibble: 685,889 x 3
 # Groups: libro [10]
-libro capitulo palabra
-  <fct>  <int> <chr>
- 1 Trafalgar 1 se
- 2 Trafalgar 1 me
- 3 Trafalgar 1 permitirá
- 4 Trafalgar 1 que
- 5 Trafalgar 1 antes
- 6 Trafalgar 1 de
- 7 Trafalgar 1 referir
- 8 Trafalgar 1 el
- 9 Trafalgar 1 gran
-10 Trafalgar 1 suceso
+    libro     capitulo  palabra
+    <fct>     <int>     <chr>
+ 1  Trafalgar 1         se
+ 2  Trafalgar 1         me
+ 3  Trafalgar 1         permitirá
+ 4  Trafalgar 1         que
+ 5  Trafalgar 1         antes
+ 6  Trafalgar 1         de
+ 7  Trafalgar 1         referir
+ 8  Trafalgar 1         el
+ 9  Trafalgar 1         gran
+10  Trafalgar 1         suceso
 # … with 685,879 more rows
 ```
 
-En el siguiente creas, con `mutate()`, dos nuevas columnas. `recuento_palabras` e `indice`. La variable `recuento_palabras` lo único que hace es numerar una tras otra todas y cada una de las palabras de cada `libro`, y lo hace de `1` al valor de `n()` en cada `libro`. En la segunda parte de esta línea crea la columna `indice` en la que lo que hace es dividir el texto en segmentos de 500 palabras. Ya has usado otras técnicas en otros capítulos anteriores. Esta es una más. Así, de la palabra 1 a la 500, el índice es 1, de la 501 a la 1000, el índice es 2 y así sucesivamente hasta llegar al final. La forma de crear este índice es por medio de una división entera, cuyo operador es `%/%`. Se trata de una división en la que no se tiene en cuenta el resto.
+En el siguiente creas, con `mutate()`, dos nuevas columnas: `recuento_palabras` e `indice`. La variable `recuento_palabras` lo único que hace es numerar una tras otra todas y cada una de las palabras de cada `libro`, y lo hace de `1` al valor de `n()` en cada `libro`. En la segunda parte de esta línea crea la columna `indice` en la que lo que hace es dividir el texto en segmentos de 500 palabras. Ya has usado otras técnicas en otros capítulos anteriores. Esta es una más. Así, de la palabra 1 a la 500, el índice es 1, de la 501 a la 1000, el índice es 2 y así sucesivamente hasta llegar al final. La forma de crear este índice es por medio de una división entera, cuyo operador es `%/%`. Se trata de una división en la que no se tiene en cuenta el resto.
 
 La última entrega de la `serie` –_La batalla de Arapiles_–, por ejemplo, tiene 89629 palabras-token, si las divides en grupos de 500, el resultado sería 179.258, pero como no quieres perder ese .258 restante de palabras (son 129 palabras), le dices que quieres que la división sea exacta, pero como sospechas de que habrá un resto, le indicas que añada 1 al índice para marcar las palabras de ese resto. Esto ya lo has hecho antes, pero de otra forma, con `ceiling()`. Prueba cualquiera de las dos líneas siguientes en la consola:
 
@@ -416,18 +421,18 @@ El resultado intermedio de la función `mutate()`, que no verás en la consola, 
 ```
 # A tibble: 685,889 x 5
 # Groups: libro [10]
-libro capitulo palabra recuento_palabras indice
-  <fct>      <int> <chr>   <int> <dbl>
- 1 Trafalgar 1     se        1   1
- 2 Trafalgar 1     me        2   1
- 3 Trafalgar 1     permitirá 3   1
- 4 Trafalgar 1     que       4   1 
- 5 Trafalgar 1     antes     5   1
- 6 Trafalgar 1     de        6   1
- 7 Trafalgar 1     referir   7   1
- 8 Trafalgar 1     el        8   1
- 9 Trafalgar 1     gran      9   1
-10 Trafalgar 1     suceso   10   1
+    libro      capitulo palabra   recuento_palabras indice
+    <fct>      <int>    <chr>     <int>             <dbl>
+ 1   Trafalgar 1        se        1                 1
+ 2   Trafalgar 1        me        2                 1
+ 3   Trafalgar 1        permitirá 3                 1
+ 4   Trafalgar 1        que       4                 1 
+ 5   Trafalgar 1        antes     5                 1
+ 6   Trafalgar 1        de        6                 1
+ 7   Trafalgar 1        referir   7                 1
+ 8   Trafalgar 1        el        8                 1
+ 9   Trafalgar 1        gran      9                 1
+10   Trafalgar 1        suceso   10                 1
 # … with 685,879 more rows
 ```
 
@@ -442,63 +447,63 @@ La Batalla de los Arapiles 39 tuvo  89628 180
 La Batalla de los Arapiles 39 todo  89629 180
 ```
 
-En los dos recuadros anteriores tienes, por un lado, las diez primeras palabras de _Trafalgar_, que se encuentran en el primer capítulo y forman el primer grupo de 500 palabras de esa entrega (podríamos decir que en la primera página). En el segundo recuadro tienes que seis últimas palabras de _La batalla de Arapiles_, que son las palabras 685884 a 685889, que se encuentran en el capítulo 39 y forman el grupo (es decir, la página) 180 de esa novela.
+En los dos recuadros anteriores tienes, por un lado, las diez primeras palabras de _Trafalgar_, que se encuentran en el primer capítulo y forman el primer grupo de 500 palabras de esa entrega (podríamos decir que en la primera página). En el segundo recuadro tienes las seis últimas palabras de _La batalla de Arapiles_, que son las palabras 685884 a 685889, que se encuentran en el capítulo 39 y forman el grupo (es decir, la página) 180 de esa novela.
 
-En la siguiente línea lee el diccionario de sentimientos `nrc` y añade la columna `sentimiento` con los distintos valores que puede tener. De nuevo es un estadio interno que no es visible, pero te muestro el aspecto que tiene:
+En la siguiente línea lee el diccionario de sentimientos `nrc` y añade la columna `sentimiento` con los distintos valores que puede tener. De nuevo es un estadio interno que no es visible, pero te muestro el aspecto que tiene y veas cómo procede el sistema:
 
 ```
 # A tibble: 170,065 x 6
 # Groups: libro [10]
-libro capitulo palabra recuento_palabras indice sentimiento
-  <fct>  <int> <chr>  <int> <dbl> <chr>
- 1 Trafalgar 1 testigo  14   1   confianza
- 2 Trafalgar 1 palabras 17   1   ira
- 3 Trafalgar 1 palabras 17   1   negativo
- 4 Trafalgar 1 infancia 20   1   alegría
- 5 Trafalgar 1 infancia 20   1   positivo
- 6 Trafalgar 1 terrible 36   1   disgusto
- 7 Trafalgar 1 terrible 36   1   ira
- 8 Trafalgar 1 terrible 36   1   miedo
- 9 Trafalgar 1 terrible 36   1   negativo
-10 Trafalgar 1 terrible 36   1   premonición
+    libro     capitulo  palabra   recuento_palabras indice  sentimiento
+    <fct>     <int>     <chr>     <int>             <dbl>   <chr>
+ 1  Trafalgar 1         testigo   14                1       confianza
+ 2  Trafalgar 1         palabras  17                1       ira
+ 3  Trafalgar 1         palabras  17                1       negativo
+ 4  Trafalgar 1         infancia  20                1       alegría
+ 5  Trafalgar 1         infancia  20                1       positivo
+ 6  Trafalgar 1         terrible  36                1       disgusto
+ 7  Trafalgar 1         terrible  36                1       ira
+ 8  Trafalgar 1         terrible  36                1       miedo
+ 9  Trafalgar 1         terrible  36                1       negativo
+10  Trafalgar 1         terrible  36                1       premonición
 # … with 170,055 more rows
 ```
 
-Todas las palabras son del capítulo primero, de la primera página y tan solo las palabras 14, 17, 20 y 36 ha obtenido una valencia (valor de la columna sentimiento). El siguiente paso es contar cuántas palabras de cada emoción hay en cada página (el número de `indice`). La tabla interna es:
+Todas las palabras son del capítulo primero, de la primera página y tan solo las palabras 14, 17, 20 y 36 ha obtenido una valencia (valor de la columna `sentimiento`). El siguiente paso es contar cuántas palabras de cada emoción hay en cada página (el número de `indice`). La tabla interna es:
 
 ```
 # A tibble: 13,738 x 4
 # Groups: libro [10]
-libro                       indice sentimiento n
-  <fct>                      <dbl> <chr>     <int>
- 1 La Batalla de los Arapiles 1    alegría     11
- 2 La Batalla de los Arapiles 1    asombro      9
- 3 La Batalla de los Arapiles 1    confianza   13
- 4 La Batalla de los Arapiles 1    disgusto    11
- 5 La Batalla de los Arapiles 1    ira          7
- 6 La Batalla de los Arapiles 1    miedo       16
- 7 La Batalla de los Arapiles 1    negativo    17
- 8 La Batalla de los Arapiles 1    positivo    24
- 9 La Batalla de los Arapiles 1    premonición 12
-10 La Batalla de los Arapiles 1    tristeza    15
+    libro                      indice sentimiento   n
+    <fct>                      <dbl>  <chr>         <int>
+ 1  La Batalla de los Arapiles 1      alegría       11
+ 2  La Batalla de los Arapiles 1      asombro        9
+ 3  La Batalla de los Arapiles 1      confianza     13
+ 4  La Batalla de los Arapiles 1      disgusto      11
+ 5  La Batalla de los Arapiles 1      ira            7
+ 6  La Batalla de los Arapiles 1      miedo         16
+ 7  La Batalla de los Arapiles 1      negativo      17
+ 8  La Batalla de los Arapiles 1      positivo      24
+ 9  La Batalla de los Arapiles 1      premonición   12
+10  La Batalla de los Arapiles 1      tristeza      15
 # … with 13,728 more rows
 ```
 
 Puedes ver que en la página 1 (`indice`) de _La batallas de Arapiles_ hay 24 palabras positivas y 17 negativas y, puedes ver, además, cuántas palabras hay que denotan alegría, confianza, disgusto, ira, miedo, premonición y tristeza. Puesto que ya has realizado los cálculos para cada `libro`, tienes que deshacerte del grupo con `ungroup()`.
 
-La siguiente línea –`spread(sentimiento, n, fill = 0)`– lo que hace es crear una tabla en la que se resumen y recopilan los valores –`n`– de cada uno de los sentimientos –`sentimiento`– para cada página –`indice`– de cada una de las entregas de la serie –`libro`–. Puesto que puede haber sitios en los que no hay palabras para un sentimiento determinado y evitar que `R` introduzca un `NA`, que es el valor que asigna por defecto cuando faltan valores, usas el argumento `fill = 0`. De esta manera te aseguras de que después podrás hacer las operaciones matemáticas necesarias. El aspecto interno de esta tabla, que de nuevo no es visible, es:
+La siguiente línea –`spread(sentimiento, n, fill = 0)`– lo que hace es crear una tabla en la que se resumen y recopilan los valores –`n`– de cada uno de los sentimientos –`sentimiento`– para cada página –`indice`– de cada una de las entregas de la serie –`libro`–. Puesto que puede haber sitios en los que no haya palabras para un sentimiento determinado y evitar que `R` introduzca un `NA`, que es el valor que asigna por defecto cuando faltan valores, usas el argumento `fill = 0`. De esta manera te aseguras de que después podrás hacer las operaciones matemáticas necesarias. El aspecto interno de esta tabla, que de nuevo no es visible, es:
 
 ```{R 11-Sentimiento-04, echo = FALSE, out.width = '80%', fig.align='center'}
 knitr::include_graphics("imagenes/11-Sentimiento-04.png")
 ```
 
-Ahora va a realizar unos cálculos. Establecerá la valencia emocional de cada página. Lo hará restando a las palabras positivas –`positivo`– las negativas –`negativo`– y las va a guardar en la columna `sentimiento`. Además, va a reorganizar los títulos –`libro`– por orden de publicación –`levels = titulos`–. El aspecto de la tabla interna final, que pasará a `ggplot()` para dibujar la gráfica, es:
+Ahora va a realizar unos cálculos con los que establecerás la valencia emocional de cada página. Lo hará restando a las palabras positivas –`positivo`– las negativas –`negativo`– y las va a guardar en la columna `sentimiento`. Además, va a reorganizar los títulos –`libro`– por orden de publicación –`levels = titulos`–. El aspecto de la tabla interna final, que pasará a `ggplot()` para dibujar la gráfica, es:
 
 ```{R 11-Sentimiento-05, echo = FALSE, out.width = '80%', fig.align='center'}
 knitr::include_graphics("imagenes/11-Sentimiento-05.jpg")
 ```
 
-Ya tienes los datos preparados para dibujar la gráfica. Puesto que lo que ofrece la tabla anterior son las diez primeras páginas de _La batalla de Arapiles_, entresaco el gráfico que acabará dibujando para este episodio (figura 11.3). Fíjate que las páginas 2, 3, 4 y 6 tienen una valencia negativa, lo que se refleja en la gráfica con barras descendentes, mientras que las paginas 1, 5, 7, 8, 9 y 10 son todas positivas.
+Ya tienes los datos preparados para dibujar la gráfica. Puesto que lo que ofrece la tabla anterior son las diez primeras páginas de _La batalla de Arapiles_, entresaco el gráfico que acabará dibujando para este episodio (figura 11.3). Fíjate que las páginas 2, 3, 4 y 6 tienen una valencia negativa, lo que se refleja en la gráfica con barras descendentes, mientras que las paginas 1, 5, 7, 8, 9 y 10 son todas positivas, por lo que las barras son ascendentes.
 
 ```{R 11-Sentimiento-06, echo = FALSE, out.width = '80%', fig.align='center', fig.cap = "Fig. 11.3. Evolución del sentimiento en _La batalla de Arapiles_"}
 knitr::include_graphics("imagenes/11-Sentimiento-06.jpg")
@@ -530,7 +535,7 @@ serie %>%
   facet_wrap(~ libro, ncol = 2, scales = "free_x")
 ```
 
-La función `geom_bar()` ya es una vieja conocida, por lo que no creo que tenga que explicarte casi nada. El argumento `stat = "identity"` establece que la altura de las barras equivalga al valor de `sentimiento`; mientras que `show.legend = FALSE` evita que se imprima en el margen derecho una leyenda explicativa como puedes ver en la imagen que hay a continuación. Es información redundante porque la ofreces en la banda gris que hay encima de cada gráfica.
+La función `geom_bar()` ya es una vieja conocida, por lo que no creo que tenga que explicarte casi nada. El argumento `stat = "identity"` establece que la altura de las barras equivalga al valor de `sentimiento`; mientras que `show.legend = FALSE` evita que se imprima en el margen derecho una leyenda explicativa como la que puedes ver en la imagen que hay a continuación. Es información redundante porque la ofreces en la banda gris que hay encima de cada gráfica.
 
 ```{R message = FALSE, warning = FALSE, , echo= FALSE}
 serie %>%
@@ -547,7 +552,7 @@ serie %>%
   facet_wrap(~ libro, ncol = 2, scales = "free_x")
 ```
 
-La última línea es la que se encarga de montar en una sola gráfica los diez gráficos y así poder comparar con facilidad. El último argumento `scales = "free_x"` es para que estreche aquellas gráficas cuyos valores del eje horizontal vayan más allá del que ofrezca en menor número de valores. En este caso, _Trafalgar_ tiene menos páginas que _La batalla de Arapiles_, que tiene más de 175 (en realidad 180).
+La última línea es la que se encarga de montar en una sola gráfica los diez gráficos y así podrás comparar los resultados con mayor facilidad. El último argumento `scales = "free_x"` es para que estrechen aquellas gráficas cuyos valores del eje horizontal vayan más allá del que ofrezca el menor número de valores. En este caso, _Trafalgar_ tiene menos páginas que _La batalla de Arapiles_, que tiene más de 175 (en realidad 180). Por eso, cuando leas gráficas, fíjate con mucho detalle en los valores que haya impresos en ambos ejes. Si no lo haces puedes obtener una idea equivocada de los resultados.
 
 ### Unos resultados más
 Te estarás preguntando, pero cuáles son las palabras que más contribuyen al sentimiento de la serie. Lo vas a averiguar con el diccionario `bing`, aunque es un poco más pobre. Todo se reduce a establecer qué palabras son las que se consideran positivas y cuáles negativas. Ya lo has hecho antes. Así que reutiliza un poco de código:
@@ -583,7 +588,7 @@ recuenta_palabras_bing %>%
   coord_flip()
 ```
 
-que se consiguen con unas pocas líneas de código
+que se consiguen con unas pocas líneas de código.
 
 ```{R eval = FALSE}
 recuenta_palabras_bing %>%
@@ -600,15 +605,14 @@ Creo que a estas alturas no necesitas que te explique qué sucede en cada línea
 
 -----
 
-## La librería `syuzhet`
-La gráficas de la figura 11.3 no permite ver cuál es la línea (curva) de la trayectoria de la historia de cada una de las entregas de los diez primeros Episodios Nacionales. La manera de verlo es como la de la gráfica de la figura 11.1. He analizado con el sistema que te mostraré más adelante una de las dos novelas que Archer & Jockers (2016) procesaron para esa gráfica. Podrás ver que las curvas son semejantes.
+# La librería `syuzhet`
+La gráficas que respresentan las evolución sentimental de cada uno de los Episodios Nacionales no permite ver cuál es la línea (curva) de la trayectoria de la historia de cada una ella. La manera de verlo es con una gráfica como la de la gráfica de la figura 11.1. He analizado con el sistema que te mostraré más adelante una de las dos novelas que Archer & Jockers (2016) procesaron para trazar esa gráfica. Tienes ambas a continuación, la publicada por Archer & Jockers (2016) y la que yo he obtenido. Podrás ver que las curvas son semejantes.
 
-
-```{R 11-Sentimiento-01a, echo = FALSE, out.width = '50%', fig.align='center'}
+```{R 11-Sentimiento-01a, echo = FALSE, out.width = '50%', fig.align='center', fig.cap = "Trayectorias de _The Da Vinci Code_ y _Fifty Shades of Grey_ según los análisis de Archer & Jockers (2016: 106)"}
 knitr::include_graphics("imagenes/11-Sentimiento-01.jpg")
 ```
 
-```{R 11-Sentimiento-09, echo = FALSE, out.width = '50%', fig.align='center', fig.cap = "Trayectorias de _The Da Vinci Code_ y _Fifty Shades of Grey_ según los análisis de Archer & Jockers (2016: 106) (superior) y de _El conde da Vinci_ en español (inferior)"}
+```{R 11-Sentimiento-09, echo = FALSE, out.width = '50%', fig.align='center', fig.cap = "Trayectoria de _El conde da Vinci_ en español"}
 knitr::include_graphics("imagenes/11-Sentimiento-09.jpg")
 ```
 
@@ -616,15 +620,15 @@ Evidentemente no pueden ser totalmente iguales las líneas de ambas gráficas po
 
 -----
 
-###_Los cuatro jinetes del Apocalipsis_
+##_Los cuatro jinetes del Apocalipsis_
 
-En lo que resta de capítulo te voy a mostrar cómo hacerlo con una novela de Vicente Blasco Ibáñez, _Los cuatro jinetes del Apocalipsis_.
+En lo que resta de este capítulo te voy a mostrar cómo hacerlo con una novela de Vicente Blasco Ibáñez: _Los cuatro jinetes del Apocalipsis_.
 
 ```{R echo = FALSE}
 rm(list=ls())
 ```
 
-Cierra y reinicia *RStudio*, es para asegurarte de que no hay nada que pueda provocar un error de ejecución, e instala la librería `syuzhet` con
+Cierra y reinicia *RStudio*, es para asegurarte de que no hay nada que pueda provocar un error de ejecución, e instala la librería `syuzhet`[^3] con
 
  ```
 install.packages("syuzhet")
@@ -638,14 +642,16 @@ library(tidytext)
 library(syuzhet)
 ```
 
-El siguiente paso es cargar el fichero `diccionarios.rda` que contiene los diccionarios de sentimientos y la función `get_sentiments.R` para poder hacer al análisis de sentimientos:
+El siguiente paso es cargar el diccionario y la función `get_sentiments.R`:
 
 ```{R}
-load("~/Dropbox/AnaText/datos/diccionarios.rda")
-source("~/Dropbox/AnaText/codigo/get_sentiments.R")
+sentimientos <- read_tsv("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/diccionarios/sentimientos_2.txt",
+                         col_types = "cccn",
+                         locale = default_locale())
+source("https://raw.githubusercontent.com/7PartidasDigital/R-LINHD-18/master/get_sentiments.R")
 ```
 
-Ahora has de cargar el texto de la novela que quieras analizar. En el directorio `datos/textos` tienes tres novelas de tres autores españoles:
+Ahora has de cargar el texto de la novela que quieras analizar. En el repositorio de 7PartidasDigital tienes tres novelas de tres autores españoles muy interesantes:
 
 * _Los jinetes del Apocalipsis_ de Vicente Blasco Ibáñez (`cuatro_jinetes_apocalipsis.txt`)
 * _Los pazos de Ulla_ de Emilia Pardo Bazán (`pazos_ulloa.txt`)
@@ -654,15 +660,25 @@ Ahora has de cargar el texto de la novela que quieras analizar. En el directorio
 La instrucción para cargar el texto es:
 
 ```{R}
-texto_entrada <- read_lines("~/Dropbox/AnaText/datos/textos/cuatro_jinetes_apocalipsis.txt")
+texto_entrada <- read_lines("https://raw.githubusercontent.com/7PartidasDigital/AnaText/master/datos/textos/cuatro_jinetes_apocalipsis.txt",
+                            locale = default_locale())
 ```
-Habrá aparecido en **Global Enviroment** el objeto `texto_entrada` y te informará de que es un `Large character` que tiene `2105 elements` y que ocupa `933.7 Kb`. Si tienes esta información, la carga ha sido correcta. Pero vas a comrpobarlo. Escribe en la consola
 
-```{R}
+Si quieres analizar cualquiera de las otras tres novelas, tan solo tienes que cambiar en la orden anterior el título de la obra.
+
+Habrá aparecido en **Global Enviroment** el objeto `texto_entrada` y te informará de que es un `Large character` que tiene `2105 elements` y que ocupa `933.7 Kb`. Si tienes esta información, la carga ha sido correcta. Pero vas a comprobarlo. Escribe en la consola
+
+```{R eval = FALSE}
 head(texto_entrada)
 ```
 
-Esta orden ha impreso los seis primeros elementos del vector `texto_entrada`. Para ver los seis últimos, basta con
+Esta orden habrá impreso los seis primeros elementos del vector `texto_entrada`. 
+
+```{R echo = FALSE}
+head(texto_entrada)
+```
+
+Para ver los seis últimos, basta con
 
 ```{R}
 tail(texto_entrada)
@@ -674,13 +690,19 @@ Ahora tienes que convertirlo en una `tibble` para poder dividirlo en palabras-to
 texto_analizar <- tibble(texto = texto_entrada)
 ```
 
-Lo que acabas de hacer es convertir en una `tibble()` lo que tenías en `texto_entrada` y le has indicado que la variable (columna) se llame `texto`. El resultado lo puedes ver con[^3]
+Lo que acabas de hacer es convertir en una `tibble()` lo que tenías en `texto_entrada` y le has indicado que la variable (columna) se llame `texto`. El resultado lo puedes ver con[^4]
 
-```{R}
+```{R eval = FALSE}
 texto_analizar
 ```
 
-Una vez convertido en tabla, en la que cada fila es un párrafo, vas a dividirlo en palabras-token –`palabra`–; crear un índice que equivaldrá a una página –`pagina`– de texto de un libro impreso; establecerá qué palabras son positivas, cuáles negativas e incluso marcará aquellas que tengan una carga emotiva; las recontará –`sentimiento`– y creará una tabla interna con la valencia para cada página. Por último, convertirá los números de la columna negativo en número negativos. El código para hacer todo esto es:
+Cuando pulses `intro` se imprimirá el comienzo de la tabla:
+
+```{R echo = FALSE}
+texto_analizar
+```
+
+Una vez lo has convertido en una tabla, en la que cada fila es un párrafo, el siguiente paso es dividirlo en palabras-token –`palabra`–; crear un índice que equivaldrá a una página –`pagina`– de texto de un libro impreso;establece qué palabras son positivas, cuáles negativas e incluso marcar aquellas que tengan una carga emotiva; recontarlas –`sentimiento`– y generar una tabla interna con la valencia para cada página. Por último, convertir los números de la columna `negativo` en número negativos. El código para hacer todo esto es:
 
 ```{R, warning= FALSE, message = FALSE}
 texto_analizar <- texto_analizar %>%
@@ -693,14 +715,20 @@ texto_analizar <- texto_analizar %>%
 ```
 
 Al final tendrás en `texto_analizar` una tabla que puedes ver con
-```{R}
+
+```{R eval = FALSE}
+texto_analizar
+```
+lo que imprimirá en la consola el comienzo de una tabla
+
+
+```{R echo = FALSE}
 texto_analizar
 ```
 
-### Explicación del código
-En cada uno de los pasos habrías obtenido lo siguiente, pero no lo puedes ver, salvo que fueras ejecutando línea a línea.
+#### Explicación del código
 
-Con la línea `unnest_tokens(palabra, texto)` divides el texto en palabras-token y se mantienen en el mismo orden que en el texto. Recuerda que las mayúsculas se pasan a minúsculas y los signos de puntuación se eliminan.
+Con la línea `unnest_tokens(palabra, texto)` divides el texto en palabras-token y se mantienen en el mismo orden que en el texto. Recuerda que las mayúsculas se pasan a minúsculas y los signos de puntuación se eliminan. (El resultado que te presento no lo puedes ver, es interno.)
 
 ```
 # A tibble: 131,337 x 1
@@ -718,12 +746,13 @@ palabra
 10 primera
 # ... with 131,327 more rows
 ```
+
 Con `mutate(pagina = (1:n()) %/% 400 + 1)` se crea la numeración de `pagina`. Esta vez consideramos que son tan solo 400 palabras por página. Tú puedes decidir la longitud que mejor te convenga.
 
 ```
 # A tibble: 131,337 x 2
-palabra      pagina
-<chr>        <dbl>
+  palabra      pagina
+  <chr>        <dbl>
 1 vicente      1
 2 blasco       1
 3 ibáñez       1
@@ -741,41 +770,45 @@ Con `inner_join(get_sentiments("nrc"))` se agrega la columna con el sentimiento 
 
 ```
 # A tibble: 37,021 x 3
-  palabra pagina sentimiento
-  <chr>    <dbl>  <chr>
-1 jardín      1   alegría
-2 jardín      1   positivo
-3 tarde       1   negativo
-4 tarde       1   tristeza
-5 pequeño     1   negativo
-6 jardín      1   alegría
-7 jardín      1   positivo
-8 impaciencia 1   negativo
-9 cita        1   asombro
-10 cita       1   negativo
+  palabra   pagina  sentimiento
+  <chr>     <dbl>   <chr>
+1 jardín        1   alegría
+2 jardín        1   positivo
+3 tarde         1   negativo
+4 tarde         1   tristeza
+5 pequeño       1   negativo
+6 jardín        1   alegría
+7 jardín        1   positivo
+8 impaciencia   1   negativo
+9 cita          1   asombro
+10 cita         1   negativo
 # ... with 37,011 more rows
 ```
-Con `count(sentimiento, pagina = pagina)` calculas –`n`– de cuántas palabras de cada sentimiento o emoción –`sentimiento`– hay en cada página –`pagina`–.
+
+Con `count(sentimiento, pagina = pagina)` calculas –`n`– cuántas palabras de cada sentimiento o emoción –`sentimiento`– hay en cada página –`pagina`–.
 
 ```
 # A tibble: 3,283 x 3
   sentimiento pagina  n
   <chr>       <dbl>   <int>
-1 alegría      1       11
-2 alegría      2        7
-3 alegría      3        6
-4 alegría      4       11
-5 alegría      5        8
-6 alegría      6        7
-7 alegría      7        6
-8 alegría      8       11
-9 alegría      9       13
-10 alegría    10        8
+1 alegría      1         11
+2 alegría      2          7
+3 alegría      3          6
+4 alegría      4         11
+5 alegría      5          8
+6 alegría      6          7
+7 alegría      7          6
+8 alegría      8         11
+9 alegría      9         13
+10 alegría    10          8
 # ... with 3,273 more rows
 ```
-Con `spread(sentimiento, n, fill = 0)`lo que haces en convertir en `0` aquellas casillas en las que hay `NA`. Y, finalmente, con `mutate(negativo = negativo*-1)` conviertes la variable `negativo` en números negativos.
 
-El siguiente paso es calcular la puntuación para cada página. Se trata de sumar a los valores de positivos los de negativos y quedarte con una tabla con el valor final para cada página. El código es:
+Con `spread(sentimiento, n, fill = 0)` lo que haces en convertir en `0` aquellas casillas en las que hay `NA`, de otro modo no podrás hacer los cálculos. Y, finalmente, con `mutate(negativo = negativo*-1)` conviertes la variable `negativo` en números negativos.
+
+## Representación gráfica
+
+Antes de poder representar gráficamente el resultado, tienes que calcular la puntuación para cada página. Es una operación muy sencilla: se trata de sumar a los valores de positivos los de negativos y quedarte con una tabla con el valor final para cada página. El código es:
 
 ```{R}
 puntuacion <- texto_analizar %>%
@@ -784,12 +817,32 @@ puntuacion <- texto_analizar %>%
 ```
 
 El resultado lo puedes ver tecleando en la consola y se imprimirá el comienzo del resultado
-```{R}
+
+```{R eval = FALSE}
 puntuacion
 ```
 
-Ahora puedes representarlo gráficamente. Leer tablas de números no suele ser muy ilustrativo. El siguiente código dibujará una gráfica de barras.
-```{R}
+Esta es la cabecera de la tabla con los resultados:
+
+```{R echo = FALSE}
+puntuacion
+```
+
+Ahora puedes representarlo gráficamente. Leer tablas de números no suele ser muy ilustrativo. El siguiente código
+```{R eval = FALSE}
+ggplot(data = puntuacion, aes(x = pagina, y = sentimiento)) +
+  geom_bar(stat = "identity", color = "midnightblue") +
+  theme_minimal() +
+  ylab("Sentimiento") +
+  xlab("Tiempo narrativo") +
+  ggtitle(expression(paste("Sentimiento en ",
+                           italic("Los cuatro jinetes del Apocalipsis")))) +
+  theme(legend.justification=c(0.91,0), legend.position=c(1, 0))
+```
+
+dibujará esta gráfica de barras
+
+```{R echo = FALSE}
 ggplot(data = puntuacion, aes(x = pagina, y = sentimiento)) +
   geom_bar(stat = "identity", color = "midnightblue") +
   theme_minimal() +
@@ -802,7 +855,7 @@ ggplot(data = puntuacion, aes(x = pagina, y = sentimiento)) +
 
 No creo que haya que explicar qué hace en cada línea esta expresión de `ggplot()`. Todo lo que contiene lo has visto en otras ocasiones.
 
-Cada barra equivale a una página con lo que puedes ver qué partes de la novela son más positivas y cuáles menos. Ten en cuenta que el resultado depende en gran medida de la riqueza del diccionario, cuantas más palabras tenga, más fino y preciso podrá ser el análisis. Sin embargo, no queda claro, hay mucho ruido y no puedes ver con nitidez la curva de la línea por la que se transita la narración. Aquí es donde entra la magia del paquete `syuzhet`, del que solo vas a utilizar una función `get_dct_transform()` que necesita saber de donde obtener los datos, en tu caso de `puntaución$sentimiento` y una serie de argumentos bastante crípticos, porque el autor del paquete no los explica suficientemente. Este es el código por medio del que actúa `get_dct_tranformor()`:
+Cada barra equivale a una página con lo que puedes ver qué partes de la novela son más positivas y cuáles menos. Ten en cuenta que el resultado depende en gran medida de la riqueza del diccionario, cuantas más palabras tenga, más fino y preciso podrá ser el análisis. Sin embargo, no queda claro, hay mucho ruido y no puedes ver con nitidez la curva de la línea por la que se transita la narración. Aquí es donde entra la magia del paquete `syuzhet`, del que solo vas a utilizar una función `get_dct_transform()` que necesita saber de donde obtener los datos, en tu caso de `puntaucion$sentimiento` y una serie de argumentos bastante crípticos, porque el autor del paquete no los explica suficientemente. Este es el código por medio del que actúa `get_dct_tranform()`:
 
 ```{R}
 texto_trans <- get_dct_transform(puntuacion$sentimiento,
@@ -811,10 +864,17 @@ texto_trans <- get_dct_transform(puntuacion$sentimiento,
                                  scale_range = TRUE)
 ```
 
-Aquí lo que aplica es una transformación matemática empleada para transformar, valga la redundancia, entre el dominio del tiempo (o espacial) y el dominio de la frecuencia que se conoce como [Transformada de Fourier](https://es.wikipedia.org/wiki/Transformada_de_Fourier). Las matemáticas que hay detrás son de infarto, salvo para quien tenga un excelente dominio de este ámbito. Sin embargo, el programador de la librería nos excusa de las matemáticas y nos ofrece la magia del resultado. Toma los valores que has guardado en `puntuacion` y realizará los cálculos. El más importante es el `low_pass_size`, por defecto está programado como `5`, he constatado que variando los valores el mejor parece ser `10`. Los resultados los ofrecerá en un rango ente `-1` y `1`, de ahí el argumento `scale_range = TRUE`. El argumento `x_reverse_len` tiene por valor por defecto `100`, y lo que hace es presentar el resultado en una escala de `0` a `100`. Quizá sea un poco más complejo después ver a qué parte del texto se refiere, por lo que si se indica que use como valor el número de páginas `nrow(puntuacion)`, entonces es más sencillo seguir la pista de dónde se produce cada cambio en el texto, como se puede ver en la gráfica de la figura 11.12.
+Aquí lo que aplica es una transformación matemática empleada para transformar, valga la redundancia, entre el dominio del tiempo (o espacial) y el dominio de la frecuencia que se conoce como [Transformada de Fourier](https://es.wikipedia.org/wiki/Transformada_de_Fourier). Las matemáticas que hay detrás son de infarto, salvo para quien tenga un excelente dominio de este ámbito. Sin embargo, el programador de la librería nos excusa de las matemáticas y nos ofrece la magia del resultado. Toma los valores que has guardado en `puntuacion` y realiza los cálculos. El más importante es el `low_pass_size`, por defecto está programado como `5`, he constatado que variando los valores el mejor parece ser `10`. Los resultados los ofrecerá en un rango ente `-1` y `1`, de ahí el argumento `scale_range = TRUE`. El argumento `x_reverse_len` tiene por valor por defecto `100`, y lo que hace es presentar el resultado en una escala de `0` a `100`. Quizá sea un poco más complejo después ver a qué parte del texto se refiere, por lo que si se indica que use como valor el número de páginas `nrow(puntuacion)`, entonces es más sencillo seguir la pista de dónde se produce cada cambio en el texto, como se puede ver en la gráfica que hay un poco más adelante.
 
 El resultado de esta función es un vector de números. Teclea en la consola
-```{R}
+
+```{R eval = FALSE}
+texto_trans
+```
+
+Se imprimirá en la consola todo el contenido del vector. Es una larga lista de valores positivos y negativos.
+
+```{R eval = FALSE}
 texto_trans
 ```
 
@@ -825,13 +885,20 @@ texto_trans <- tibble(pagina = seq_along(texto_trans), ft = texto_trans)
 ```
 
 Lo que hace esta orden es convertir `texto_trans` en una `tibble` con dos columnas: `pagina` y `ft`. `pagina` se rellena con el número de la página a la que corresponde cada valor de ft, que es el resultado obtenido por los cálculos de la función `get_dct_tranform()`, por lo que basta con un sencillo `seq_along(texto_trans)`, que lo que hace es rellenar las casillas de `pagina` con un número consecutivo que va desde `1` hasta la cantidad total de elementos (líneas) que haya en `ft`. El resultado lo puedes ver con
-```{R}
+
+```{R eval = FALSE}
+texto_trans
+```
+
+que imprimirá los mismo resultados de antes, pero cada valor `ft`está perfectamente identificado a qué página pertenece `pagina`.
+
+```{R eval = FALSE}
 texto_trans
 ```
 
 Ahora estás en disposición de dibujar la gráfica. Para ello necesitas esta pequeña sección de código de `ggplot()`:
 
-```{R}
+```{R eval = FALSE}
 ggplot(texto_trans, aes(x = pagina, y = ft)) +
   geom_bar(stat = "identity", alpha = 0.8,
            color = "aquamarine3", fill = "aquamarine3") +
@@ -842,11 +909,24 @@ ggplot(texto_trans, aes(x = pagina, y = ft)) +
                            italic("Los cuatro jinetes del Apocalipsis"))))
 ```
 
-Creo que todo lo que hace esta orden de `ggplot()` ya lo sabes porque lo has visto en los capítulos anteriores. Lo único raro esta vez es el contenido de `ggtitle(`). Aquí he querido que el título de la obra esté en cursiva, como mandan los cánones. Para conseguirlo hay que complicar la cosa con la función `expression()`, y lo que pretende es unir una primera parte "Forma de la historia de " y el título en cursiva, de ahí que use `paste()` para unirlos, y antes del título use `italic()`.
+que dibujará esta gráfica:
 
-Pero a veces, quizá sea mejor una sencilla gráfica de líneas que se obtiene con la función `plot()` básica de `R`. El código para obtenerla es:
+```{R echo = FALSE}
+ggplot(texto_trans, aes(x = pagina, y = ft)) +
+  geom_bar(stat = "identity", alpha = 0.8,
+           color = "aquamarine3", fill = "aquamarine3") +
+  theme_minimal() +
+  labs(x = "Tiempo narrativo",
+       y = "Transformación Valorada del Sentimiento") +
+  ggtitle(expression(paste("Forma de la historia de ",
+                           italic("Los cuatro jinetes del Apocalipsis"))))
+```
 
-```{R}
+Creo que todo lo que hace esta orden de `ggplot()` ya lo sabes porque lo has visto en los capítulos anteriores. Lo único raro esta vez es el contenido de `ggtitle()`. Aquí he querido que el título de la obra esté en cursiva, como mandan los cánones. Para conseguirlo hay que complicar la cosa con la función `expression()`, y lo que pretende es unir una primera parte "Forma de la historia de " y el título en cursiva, de ahí que use `paste()` para unirlos, y antes del título use `italic()`.
+
+Pero a veces, quizá sea mejor una sencilla gráfica de líneas que se obtiene con la función `plot()` básica de `R`. El código para obtenerla es
+
+```{R eval = FALSE}
 plot(texto_trans,
      type="l",
      yaxt='n',
@@ -857,7 +937,24 @@ Los cuatro jinetes del Apocalipsis")
 abline(h = 0.0, col = "red")
 ```
 
-Es muy sencilla. La función `plot()` es la responsable de dibujar la gráfica. El primer argumento es el lugar de donde ha de obtener los datos, en este caso `texto_trans`. El argumento `type ="l"` determina que dibuje una línea fina (hay otras posibilidades, échale una ojeada a la ayuda de `plot`). `yaxt='n'` y `ylab=""` evitan que se imprima información en el eje vertical (cuestión estética). Prueba a reimprimir el gráfico sin estos dos argumentos. `xlab=` sirve para darle una etiqueta más clara al eje horizontal (si no lo hubiera puesto había impreso `pagina`, que es el nombre de la variable). `main =""` sirve para poner el nombre principal del gráfico. Verás que al final de la línea hay un \n, eso lo que le indica que es que lo siguiente lo imprima en una nueva línea. La última instrucción `abline()` sirve para trazar una línea horizantal, de ahí el argumento `h =`. El `0.0` le indica que debe trazarla en el punto donde esté el valor `0.0` (no lo puedes ver porque le has dicho que no lo imprima con `yaxt='n'`. `col = "red"` creo que es evidente: el color de la línea.
+que dibujará una gráfica más sencilla, pero con la misma información:
+
+```{R echo = FALSE}
+plot(texto_trans,
+     type="l",
+     yaxt='n',
+     ylab="",
+     xlab ="Tiempo narrativo",
+main = "La forma de la historia:\n
+Los cuatro jinetes del Apocalipsis")
+abline(h = 0.0, col = "red")
+```
+
+Es muy sencilla. La función `plot()` es la responsable de dibujar la gráfica. El primer argumento es el lugar de donde ha de obtener los datos, en este caso `texto_trans`. El argumento `type ="l"` determina que dibuje una línea fina (hay otras posibilidades, échale una ojeada a la ayuda de `plot`). Los argumentos `yaxt='n'` y `ylab=""` evitan que se imprima información en el eje vertical (cuestión estética). Prueba a reimprimir el gráfico sin estos dos argumentos. `xlab=` sirve para darle una etiqueta más clara al eje horizontal (si no lo hubiera puesto había impreso `pagina`, que es el nombre de la variable, también habría sido clara, pero no tan emocionante). El argumento `main =""` sirve para poner el nombre principal del gráfico. Verás que al final de la línea hay un `\n`, eso lo que le indica que es que lo siguiente lo imprima en una nueva línea.
+
+La última instrucción `abline()` sirve para trazar una línea horizantal, de ahí el argumento `h =`. El valor `0.0` le indica que debe trazarla en el punto donde se encuentre el valor `0.0` (no lo puedes ver porque le has dicho que no lo imprima con `yaxt='n'`). El último argumento, `col = "red"`, creo que es evidente: selecciona el color de la línea.
+
+
 
 
 
@@ -879,7 +976,9 @@ Pluichick 1980: Robert Plitchick, «A general psychoevolutionary theory of emoti
 
 [^2]: El doble corchete `[[i]]` es la forma más sencilla de extraer datos de una lista.
 
-[^3]: La edición que electrónica que he localizado mantiene algunas peculiaridades acentuales de principios del siglo XX como es la acentuación de la preposición _a_. El cambio de norma se produjo en 1908, pero tardó en arraigar, como puede verse en el gráfico generado con [Google N-gram](https://books.google.com/ngrams/graph?content=a%2C%C3%A1&year_start=1800&year_end=2000&corpus=10&smoothing=3&share=&direct_url=t1%3B%2Ca%3B%2Cc0%3B.t1%3B%2C%C3%A1%3B%2Cc0#t1%3B%2Ca%3B%2Cc0%3B.t1%3B%2C%C3%A1%3B%2Cc1)
+[^3]: Recuerda que solo tienes que instalar las librerías una vez. Así que en las sucesivas pruebas que hagas con este código tienes que saltarte el paso de instalar la librería `syuzhet`.
+
+[^4]: La edición que electrónica que he localizado mantiene algunas peculiaridades acentuales de principios del siglo XX como es la acentuación de la preposición _a_. El cambio de norma se produjo en 1908, pero tardó en arraigar, como puede verse en el gráfico generado con [Google N-gram](https://books.google.com/ngrams/graph?content=a%2C%C3%A1&year_start=1800&year_end=2000&corpus=10&smoothing=3&share=&direct_url=t1%3B%2Ca%3B%2Cc0%3B.t1%3B%2C%C3%A1%3B%2Cc0#t1%3B%2Ca%3B%2Cc0%3B.t1%3B%2C%C3%A1%3B%2Cc1)
 ![](imagenes/11-Sentimiento-10.png)
 
 

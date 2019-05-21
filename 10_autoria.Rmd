@@ -1,17 +1,6 @@
----
-title: "10 Autoría"
-author: "JMFR"
-date: "12/5/2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Análisis atribución de autoría
-
 ## Introducción
+
 La **estilometría** es el análisis estadístico de los textos literarios. Sin embargo, para muchos se ha convertido en un sinónimo de los análisis de atribución de autoría. Este es uno de los problemas que más tinta hace correr y que se remonta a una vieja discusión académica: la llamada [_Shakespeare authorship question_](https://en.wikipedia.org/wiki/Shakespeare_authorship_question), o lo que es lo mismo: si Shakespeare escribió Shakespeare. Es un debate que surgió a mediados del siglo XIX y cuanta con cuatro candidatos básicos posibles:
 
 * Edward de Vere, 17 Conde de Oxford
@@ -20,14 +9,15 @@ La **estilometría** es el análisis estadístico de los textos literarios. Sin 
 * William Stanley, 6 Conde de Derby.
 
 La primera aproximación al problema fue la de Mendenhall, reflejada en su artículo [«A Mechanical solution of a literary problem»](https://en.wikisource.org/wiki/Popular_Science_Monthly/Volume_60/December_1901/A_Mechanical_Solution_of_a_Literary_Problem). La solución mecánica consistió en contar las letras de cada una de las palabras de las obras de Shakespeare y comparar la longitud de las palabras de las obras atribuidas a Shakespeare con los sospechosos habituales.
+
 El procedimiento era muy sencillo: una persona leía una palabra, contaba el número de letras y lo anunciaba en voz alta; otra apretaba el botón adecuado (uno para cada número) en una máquina registradora construida al efecto. Procedieron así a lo largo de dos millones de palabras (400000 eran de Shakespeare). La conclusión a la que llegaron era que la longitud de palabra más usual en Shakespeare era de cuatro letras, «a thing never met with before» (Mendenhall 1901, 102).
 
 El laborioso procedimiento de Mendenhall debió influir en que nadie se ocupara de los problemas de estilometría hasta principios de la década de 1960 con el llamado caso de los _Federalist Papers_.
 
 
-## Los _Federalist Papers_
+### Los _Federalist Papers_
 
-Los [_Federalist Papers_](https://es.wikipedia.org/wiki/The_Federalist_Papers) es una serie de 85 artículos y ensayos que fueron publicados anónimamente, bajo el seudónimo Publius, para persuadir a los norteamericanos de que ratificaran la nueva constitución. Se sabe que los escribieron Alexander Hamilton, James Madison y John Jay. Sin embargo, doce de ellos los reclamaban como propios Hamilton y Madison. Dos estadistas norteamericanos, Mosteller y Wallace (1964), basándose en la frecuencia de uso de palabras gramaticales, _function words_, como artículos, conjunciones y preposiciones como discriminadores de estilo establecieron la autoría de cada uno de los doce ensayos disputados. Así, pudieron ver, por ejemplo, que la preposición _upon_ aparecía 3.24 veces por cada 1000 palabras en los escritos de Hamilton frente a 0.23 en los de Madison. En cambio, este prefería la palabra _whilst_ frente _while_, que era la favorecida por Hamilton (0.47) pero inexistente en Hamilton (0), y, por el contrario, Hamilton usaba _enough_ (0.59) frente a la ausencia en Madison (0).
+Los [_Federalist Papers_](https://es.wikipedia.org/wiki/The_Federalist_Papers) es una serie de 85 artículos y ensayos que fueron publicados anónimamente, bajo el seudónimo Publius, para persuadir a los norteamericanos de que ratificaran la nueva constitución. Se sabe que los escribieron [Alexander Hamilton](https://es.wikipedia.org/wiki/Alexander_Hamilton), [James Madison](https://es.wikipedia.org/wiki/James_Madison) y [John Jay](https://es.wikipedia.org/wiki/John_Jay). Sin embargo, doce de ellos los reclamaban como propios Hamilton y Madison. Dos estadistas norteamericanos, Mosteller y Wallace (1964), basándose en la frecuencia de uso de palabras gramaticales, _function words_, como artículos, conjunciones y preposiciones como discriminadores de estilo establecieron la autoría de cada uno de los doce ensayos disputados. Así, pudieron ver, por ejemplo, que la preposición _upon_ aparecía 3.24 veces por cada 1000 palabras en los escritos de Hamilton frente a 0.23 en los de Madison. En cambio, este prefería la palabra _whilst_ frente _while_, que era la favorecida por Hamilton (0.47) pero inexistente en Hamilton (0), y, por el contrario, Hamilton usaba _enough_ (0.59) frente a la ausencia en Madison (0).
 
 Esto llevó a la constatación de que pueden ser mucho más interesantes las palabras gramaticales ([Halleleeck](https://cvc.cervantes.es/ensenanza/biblioteca_ele/aepe/pdf/boletin_34-35_18_86/boletin_34-35_18_86_24.pdf)), las _function words_, las que borrábamos al considerarlas vacías, que las semánticas para establecer la huella lingüística de un autor porque las gramaticales no dependen del contexto, del tema ni del género y, además, las palabras gramaticales se usan de manera inconsciente, con lo que son más capaces de atrapar las selecciones estilísticas de los diferentes autores, aunque se puede jugar con muchos marcadores de estilo como la longitud de palabras, de las oraciones, las palabras gramaticales, distribución de letras, colocaciones, etc.
 
@@ -60,13 +50,13 @@ En versiones anteriores enseñaba, partiendo del libro de Matthew L. Jockers (20
 * 4 de Pereda
 * 7 de Pérez Galdós
 
-A estos añadí un texto que etiqueté `anonimo.xml`. El fichero anonimo contiene el primer Episodio Nacional de Benito Pérez Galdós: _Trafalgar_. La idea es ver si el algoritmo podía establecer la probable identidad del autor del texto anónimo agrupándolo, naturalmente con su autor: Pérez Galdós.
+A estos añadí un texto que etiqueté `anonimo.xml`. El fichero anonimo contiene el primer Episodio Nacional de Benito Pérez Galdós: _Trafalgar_. La idea era ver si el algoritmo podía establecer la probable identidad del autor del texto anónimo agrupándolo, naturalmente con su autor: Pérez Galdós.
  
 ```{R echo = FALSE}
 library(XML)
-ficheros <- list.files(path = "datos/autoresXML")
+ficheros <- list.files(path = "~/Documents/GitHub/AnaText/datos/autoresXML")
 ficheros <- c(ficheros[1:15],ficheros[20:22])
-dir.entrada <- "datos/autoresXML" #Ojo al grupo
+dir.entrada <- "~/Documents/GitHub/AnaText/datos/autoresXML" #Ojo al grupo
 ficheros.v <- ficheros
 # Función para crear una tabla de frecuencias relativas de un fichero TEI
 TablaPalabrasTEI <- function(documento){

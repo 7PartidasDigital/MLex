@@ -1,0 +1,28 @@
+---
+title: "Untitled"
+author: "JMFR"
+date: "21/5/2019"
+output: html_document
+---
+# Análisis atribución de autoría
+## Introducción
+
+La **estilometría** es el análisis estadístico de los textos literarios. Sin embargo, para muchos se ha convertido en un sinónimo de los análisis de atribución de autoría. Este es uno de los problemas que más tinta hace correr y que se remonta a una vieja discusión académica: la llamada [_Shakespeare authorship question_](https://en.wikipedia.org/wiki/Shakespeare_authorship_question), o lo que es lo mismo: si Shakespeare escribió Shakespeare. Es un debate que surgió a mediados del siglo XIX y cuanta con cuatro candidatos básicos posibles:
+
+* Edward de Vere, 17 Conde de Oxford
+* Francis Bacon
+* Christopher Marlowe y
+* William Stanley, 6 Conde de Derby.
+
+La primera aproximación al problema fue la de Mendenhall, reflejada en su artículo [«A Mechanical solution of a literary problem»](https://en.wikisource.org/wiki/Popular_Science_Monthly/Volume_60/December_1901/A_Mechanical_Solution_of_a_Literary_Problem). La solución mecánica consistió en contar las letras de cada una de las palabras de las obras de Shakespeare y comparar la longitud de las palabras de las obras atribuidas a Shakespeare con los sospechosos habituales.
+
+El procedimiento era muy sencillo: una persona leía una palabra, contaba el número de letras y lo anunciaba en voz alta; otra apretaba el botón adecuado (uno para cada número) en una máquina registradora construida al efecto. Procedieron así a lo largo de dos millones de palabras (400000 eran de Shakespeare). La conclusión a la que llegaron era que la longitud de palabra más usual en Shakespeare era de cuatro letras, «a thing never met with before» (Mendenhall 1901, 102).
+
+El laborioso procedimiento de Mendenhall debió influir en que nadie se ocupara de los problemas de estilometría hasta principios de la década de 1960 con el llamado caso de los _Federalist Papers_.
+
+
+### Los _Federalist Papers_
+
+![](https://bit.ly/2EnRBBw)
+
+Los [_Federalist Papers_](https://es.wikipedia.org/wiki/The_Federalist_Papers) es una serie de 85 artículos y ensayos que fueron publicados anónimamente, bajo el seudónimo Publius, para persuadir a los norteamericanos de que ratificaran la nueva constitución. Se sabe que los escribieron [Alexander Hamilton](https://es.wikipedia.org/wiki/Alexander_Hamilton), [James Madison](https://es.wikipedia.org/wiki/James_Madison) y [John Jay](https://es.wikipedia.org/wiki/John_Jay). Sin embargo, doce de ellos los reclamaban como propios Hamilton y Madison. Dos estadistas norteamericanos, Mosteller y Wallace (1964), basándose en la frecuencia de uso de palabras gramaticales, _function words_, como artículos, conjunciones y preposiciones como discriminadores de estilo establecieron la autoría de cada uno de los doce ensayos disputados. Así, pudieron ver, por ejemplo, que la preposición _upon_ aparecía 3.24 veces por cada 1000 palabras en los escritos de Hamilton frente a 0.23 en los de Madison. En cambio, este prefería la palabra _whilst_ frente _while_, que era la favorecida por Hamilton (0.47) pero inexistente en Hamilton (0), y, por el contrario, Hamilton usaba _enough_ (0.59) frente a la ausencia en Madison (0).
