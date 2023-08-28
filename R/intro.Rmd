@@ -1,0 +1,511 @@
+---
+title: "A hands-on in R for Humanists"
+author: "J. M. Fradejas"
+date: "2023.09.21"
+output: html_notebook
+---
+
+```{r uq1, echo=F, fig.cap="", message=FALSE, warning=FALSE, fig.align="center", out.width='10%'}
+knitr::include_graphics("https://www.emlex.phil.fau.eu/files/2016/06/emlex-logo_schrift_130vert.png")
+```
+
+# Introduction
+
+This document contains the materials for the *A Hands-on in R for Humanists* workshop offered by the [European Master in Lexicography](https://www.usc.gal/en/studies/masters/arts-and-humanities/european-master-lexicography) at the [Universidade de Santiago de Compostela](https://www.usc.gal/en).
+
+This tutorial shows how to get started with R and it specifically focuses on R for analyzing language data but it offers valuable information for anyone who wants to get started with R. As such, this tutorial is aimed at fresh users or beginners with the aim of showcasing how to set up a R session in RStudio, how to set up R projects, and how to do basic operations using R.
+
+## Goals of this tutorial{-}
+
+The goals of this tutorial are:
+
+- How to get started with R 
+- How to orient yourself to R and RStudio
+- How to create and work in R projects
+- How to know where to look for help and to learn more about R
+- Understand the basics of working with data: load data, save data, working with tables, create a simple plot
+- Learn some best practices for using R scripts, using data, and projects 
+- Understand the basics of objects, functions, and indexing
+
+## Audience{-}
+
+The intended audience for this tutorial is beginner-level, with no previous experience using R. Thus, no prior knowledge of R is required.
+
+Participants are encourage to bring and use their own laptops with the software already installed (with a working Internet connection), to ensure that you can continue using what you learn once you leave the workshop.
+
+
+## Installing R and RStudio{-}
+
+For the workshop, we will use RStudio. RStudio is a handy interface to use the programming language R. To use RStudio, you need to install both R and RStudio.
+Please go through the installation steps below to install R and RStudio before the start of the workshop. Please also make sure that the software runs as expected once it is installed.
+
+
+  + You have a Windows computer?
+  
+    - Download R. You have it [here](https://cran.r-project.org/bin/windows/base/R-4.1.3-win.exe)
+    - Run the `.exe` file that was just downloaded
+    - Now, download RStudio. Just click [here](https://download1.rstudio.org/electron/windows/RStudio-2023.06.2-561.exe)
+    - Once it's downloaded, run the `.exe` file that was just downloaded
+    - Once it's installed, open RStudio to make sure it works and there is no error messages.
+
+  + You have a Mac? 
+
+    - Download R. If you have an M1/M2 machine click [here](https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.1-arm64.pkg), but if you have an older Intel machine, them click [here](https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.1-x86-64.pkg)
+    - Run the `.pkg` file that was just downloaded
+    - Now, download RStudio. Just click [here](https://download1.rstudio.org/electron/macos/RStudio-2023.06.2-561.dmg)
+    - Once it's downloaded, double click the `.dmg` file to install it
+    - Once it's installed, open RStudio to make sure it works and there is no error messages.
+    
+This is what RStudio looks like when you first open it (well, mine gives some info in Spanish):
+
+```{r mlex01, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='100%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_001.png")
+``` 
+
+# R and RStudio Basics{-}
+
+RStudio is an IDE - Integrated Development Environment. The interface provides easy access to R. The advantage of this application is that R programs and files as well as a project directory can be managed easily. The environment is capable of editing and running program code, viewing outputs and rendering graphics. Furthermore, it is possible to view variables and data objects of an R-script directly in the interface. 
+
+## RStudio: Panes{-}
+
+The GUI - Graphical User Interface - that RStudio provides divides the screen into four areas that are called **panes**:
+
+1. File editor
+2. Environment variables
+3. R console
+4. Management panes (File browser, plots, help display and R packages).
+
+The two most important are the R console (bottom left) and the File editor (or Script in the top left).
+The Environment variables and Management panes are on the right of the screen and they have several tabs: 
+
+* **Environment** (top): Lists all currently defined objects and data sets
+* **History** (top): Lists all commands recently used or associated with a project
+* **Plots** (bottom): Graphical output goes here
+* **Help** (bottom): Find help for R packages and functions.  Don't forget you can type `?` before a function name in the console to get info in the Help section. 
+* **Files** (bottom): Shows the files available to you in your working directory
+
+### R Console (bottom left pane){-}
+
+The console pane allows you to quickly and immediately execute R code. You can experiment with functions here, or quickly print data for viewing. 
+
+Type next to the `>` and press `Enter` to execute. 
+
+***
+
+<div class="warning" style='padding:0.1em; background-color:#51247a; color:#f2f2f2'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+<b>EXERCISE TIME!</b></p>
+<p style='margin-left:1em;'>
+</p></span>
+</div>
+
+<div class="question">` 
+
+1. You can use R like a calculator.  Try typing `2+8` into the **R console**, as is the following image.
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_002.png")
+```
+
+<details>
+  <summary>Answer</summary>
+
+```{r calculator, echo=FALSE}
+  2+8
+```
+</details>
+
+</div>
+
+***
+
+Here, the plus sign is the **operator**.  Operators are symbols that represent some sort of action.  However, R is, of course, much more than a simple calculator.  To use R more fully, we need to understand **objects**, **functions**, and **indexing** (the number between square brackets)- which you will learn about as we go.
+
+For now, think of *objects as nouns* and *functions as verbs*. 
+
+## Script Editor pane (top left pane){-}
+
+The Editor pane only opens if prompted. It is very flexible since it allows you to go back and forth, highlights the various components of an expression in colors, allows you to save a script to reuse it and correct errors without having to rewrite everything. The way to open it is very simple click on `File`
+
+```{r mlex02, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_003.png")
+``` 
+
+Click on `New File` and then on `R Script` as shown below.
+
+```{r rstudio12, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_004.png")
+```
+
+This `R Script` will be the file in which you do all your work.
+
+## Running commands from a script{-}
+
+In contrast to the R console, which quickly runs code, the Script Editor (in the top left) does not automatically execute code. To run code from a script, insert your cursor on a line with a command, and press `CTRL/CMD+Enter`.
+
+Or highlight some code to only run certain sections of the command, then press `CTRL/CMD+Enter` to run.
+
+Alternatively, use the `Run` button at the top of the pane to execute the current line or selection (see below).
+
+```{r rstudio13, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_005.png")
+```
+
+
+
+# Getting started with R{-}
+
+This section introduces some basic concepts and procedures that help optimize your workflow in R. 
+
+## Setting up an R session{-}
+
+At the beginning of a session, it is common practice to define some basic parameters. This is not required or even necessary, but it may just help further down the line. This session preparation may include specifying options. In the present case, we 
+
++ want R to show numbers as numbers up to 100 decimal points (and not show them in mathematical notation (in mathematical notation, 0.007 would be represented as 0.7e^-3^))
+
++ want R to show maximally 100 results (otherwise, it can happen that R prints out pages-after-pages of some numbers).
+
+Again, the session preparation is not required or necessary but it can help avoid errors. 
+
+```{r, message=F, warning=F}
+# set options
+options(stringsAsFactors = F)                           
+options(scipen = 100) 
+options(max.print=100) 
+```
+
+## Packages{-}
+
+When using R, most of the functions are not loaded or even installing automatically. Instead, most functions are in contained in what are called **packages**. 
+
+The bare-bone R comes with about 30 packages ("base R").  There are over 10,000 user-contributed packages; you can discover these packages online.  A prevalent collection of packages is the `tidyverse`, which includes `ggplot2`, a package for making graphics.
+
+Before being able to use a package, we need to install the package (using the `install.packages` function) and load the package (using the `library` function). However, a package only needs to be installed once(!) and can then simply be loaded. When you install a package, this will likely install several other packages it depends on. You should have already installed `tidyverse`, `tidyverse`, `quanteda` and `tm` before the workshop, to save time and problems. 
+
+You must load the package in any new R session where you want to use that package. Below I show what you need to type when you want to install the `tidyverse`, the `tidytext`,  the `quanteda`, and the `tm` packages (which are the packages that we will need in this workshop).
+
+```{r, echo=T, eval=F, message=F, warning=F}
+install.packages("tidyverse")
+install.packages("tidytext")
+install.packages("quanteda")
+install.packages("tm")
+install.packages("stopwords")
+```
+
+To load these packages, use the `library` function which takes the package name as its main argument.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+library(tm)
+```
+
+The session preparation section of your script file will thus also state which packages a script relies on.
+
+In script editor pane of RStudio, the code blocks that install and activate packages would look like this:
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_006.png")
+``` 
+
+
+The lines starting with *#* and printed in green are comments. They are very useful to remind you what a line or chunk of code does.
+
+## Getting help{-}
+
+When working with R, you will encounter issues and face challenges. A very good thing about R is that it provides various ways to get help or find information about the issues you face.
+
+### Finding help within R{-}
+
+To get help regrading what functions a package contains, which arguments a function takes or to get information about how to use a function, you can use the `help` function or you can simply type a `?` before the package or or function. I you run any of these two instruccions in the Console pane, the Help tab on the botton right pane will show the answer.
+
+```{r intro_01_11, echo=TRUE, eval=F, warning=F, message=F}
+help(library) 
+?library
+```
+
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='25%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_007.png")
+``` 
+
+There are also other "official" help resources from R/RStudio. 
+
+* Read official package documentation, see vignettes, e.g., Tidyverse <https://cran.r-project.org/package=tidyverse>
+
+* Use the RStudio Cheat Sheets at <https://www.rstudio.com/resources/cheatsheets/>
+
+* Check out the keyboard shortcuts `Help` under `Tools` in RStudio for some good tips 
+
+### Finding help online{-}
+
+One great thing about R is that you can very often find an answer to your question online. [R-bloggers](https://www.r-bloggers.com/) and [stackoverflow](https://stackoverflow.com/questions/tagged/r) and great places.
+
+* Google your error!
+
+# Working with text{-}
+
+R was created to do statistical analysis and visualize data, but it also serves to handle textual data that we can convert into statistical data and visualize them.
+
+
+## Loading text data{-}
+A classical corpus of texts to teach the basics of text handling with R are the State of the Union Address (SOTU), an annual message delivered, since 1790, by the President of the United States to a joint session of the United States Congress. We will be using it. 
+All SOTU messages are accesible in the internet, and to load them we can use the `read_Lines` which takes the file name of the text as its first argument (in this case is an internet URL). Let mine, for a while the 2022 speech.
+
+The very first thing is to load it in the system and save it an object that named `last_sotu`
+
+```{r, message=FALSE, warning=FALSE}
+last_sotu <- read_lines(url("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/sotu/242.txt"))
+# inspect data
+str(last_sotu)
+```
+
+Once it is contained in an object, it is very easy to extract frequency information and to create frequency lists. We can do this by first using the `unnest_tokens` function which splits texts into individual words (tokens) , and then use the `count` function to get the raw frequencies of all word types in a text.
+
+In the first place, we are transforming the long text into a short of table to handle text more easily.
+
+```{r, message=FALSE, warning=FALSE}
+tidy_sotu <- tibble(para_number = seq_along(last_sotu),
+                    text = last_sotu)
+```
+
+Now we can split it into tokens.
+
+```{r, message=FALSE, warning=FALSE}
+tidy_words <- tidy_sotu %>%
+  unnest_tokens(word, text) %>%
+  count(word, sort=T)
+tidy_words
+```
+
+Extracting N-grams is also very easy as the `unnest_tokens` function can an argument called `token` in which we can specify that we want to extract n-grams, If we do this, then we need to specify the `n` as a separate argument. Below we specify that we want the frequencies of all 4-grams, that is, that is, all sequences of four consecutive words.
+
+```{r, message=FALSE, warning=FALSE}
+tidy_sotu %>%
+  unnest_tokens(word, text, token = "ngrams", n = 4) %>%
+  drop_na() %>%
+  count(word, sort=T)
+```
+
+It is also possible to split a text into sentences rather than words. It is easy because the argument `tokens` from  `unnest_tokens` function can take the argument `sentences`.
+
+```{r message=FALSE, warning=FALSE}
+tidy_sotu %>%
+  unnest_tokens(sentences,
+                text,
+                token = "sentences")
+```
+N.B. Click on the black arrow point so you can see the sentences. 
+
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='25%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_008.png")
+``` 
+
+
+In the last Biden's speech there are `6553` words. It can easily calculated by adding all the `n` values of the `tidy_words` object.
+
+```{r, message=FALSE, warning=FALSE}
+sum(tidy_words$n)
+```
+
+And when we divided the speech into tokens, we saw that extremely common words such as “the”, “to”, “and”, “of”, and “we” float to the top of the table. These words are not particularly insightful for determining the content of the speech. We can remove them.
+
+```{r, message=FALSE, warning=FALSE}
+data(stop_words)
+tidy_words %>%
+  anti_join(stop_words)
+```
+Every time you see a table like the one above, you can go through it by tapping the `Next` label in the lower left of the table.
+
+However, still there are some very common words, or contactions, as “let's”, “let's”, “that's”, and “it's” and even some numbers “19”, “30”. What we want is to find the words that are represented much more often in this text than over a large external corpus of English. To accomplish this we need a dataset giving these frequencies. A good one is the Peter Norvig's using the Google Web Trillion Word Corpus, collected from data gathered via Google’s crawling of known English websites.
+
+```{r, message=FALSE, warning=FALSE}
+word_frequencies <- read_csv("https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/assets/basic-text-processing-in-r/word_frequency.csv")
+head(word_frequencies)
+```
+
+The first column lists the language (always “en” for English in this case), the second gives the word and the third the percentage of the Trillion Word Corpus consisting of the given word. For example, the word “for” occurs almost exactly in 1 out of every 100 words, at least for text on websites indexed by Google.
+
+To combine these overall word frequencies with the table constructed from 2022 Biden's State of the Union speech, we can utilize the `inner_join` function. This function takes two data sets and combines them on all commonly named columns; in this case the common column is the one named `word`.
+
+
+```{r, message=FALSE, warning=FALSE}
+tidy_words %>%
+  inner_join(word_frequencies) %>%
+  filter(frequency < 0.1)
+```
+
+This list is starting to look a bit more interesting. A term such as “american(s)”, “america”, “year”, and “tonight”, float to the top because we might speculate that they are used a lot in speeches by the presidents of US, but relatively less so in other domains. Setting the threshold even lower, to 0.002, gives an even better summary of the speech. To see the first 100 words, click on `Next` (lower right of the following table).
+
+```{r, message=FALSE, warning=FALSE}
+tidy_words %>%
+  inner_join(word_frequencies) %>%
+  filter(frequency < 0.002)
+```
+
+There are quite a few interesting terms as “putin”, “ukrainian”, “allies”, “pandemic”, “deficit”, and “inflation” that seem to suggest some of the key themes of the speech.
+
+Before getting into deeper waters, we will make We will make a brief summary, of the five most used words, in speech we have been exploring. To do it, we need a table with some metadata to fully identify every speech. This table holds the name of the President, year of the SOTU address, years in office (somehow irrelevant), political party, and type of address as the could be written or spoken (speech). So let us load into the computer.
+
+```{r, message=FALSE, warning=FALSE}
+sotu_meta <- read_tsv("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/sotu_meta.txt")
+# Inspect the data
+sotu_meta
+```
+
+Now it is time to summarize it in just one line. At the end of the instruction you have a `5`, it means that it will select the five most used words, but it can be increased to any number (for a summary over 10 will not be very informative)
+
+```{r, message=FALSE, warning=FALSE, error = FALSE}
+address_summary <- tidy_words %>%
+  inner_join(word_frequencies) %>%
+  filter(frequency < 0.002)
+result <- c(sotu_meta$president[242], sotu_meta$year[242], address_summary$word[1:5])
+paste(result, collapse = "; ")
+```
+
+## Concordancing and KWICs{-}
+
+Creating concordances or key-word-in-context (KWIC) displays is one of the most common practices when dealing with text data. Fortunately, there exist ready-made functions that make this a very easy task in R. We will use the `kwic` function from the `quanteda` package to create kwics here. 
+
+```{r, message=FALSE, warning=FALSE}
+kwic_multiple <- kwic(last_sotu, 
+       pattern = "Ukraine",
+       window = 3) %>%
+  as.data.frame()
+# inspect data
+head(kwic_multiple)
+```
+
+# Analyzing Every State of the Union Address from 1790 to 2023
+
+The first step in analyzing the entire State of the Union corpus is to read all of the addresses into R together. This involves to use the `readLines` function as before, we will `paste` together all paragraphs of every speech, add an identification system to know which speech is which speech. And we have to put all this within a loop becasuse it has to do it 243 and store it in just one table: `all_sotu`.
+
+As the files are in the web, the very first step is to declare the full url for every speech and an empty table (`all_sotu`) to hold all the texts.
+
+```{r, message=FALSE, warning=FALSE}
+base_url <- "https://raw.githubusercontent.com/7PartidasDigital/MLex/master"
+files <- sprintf("%s/sotu/%03d.txt", base_url, 1:243)
+all_sotu <- NULL
+```
+
+Now we can read them all into a table (it will take a bit)
+
+```{r, message=FALSE, warning=FALSE}
+for (i in 1:length(files)) {
+  sotu <- readLines(files[i])
+  sotu <- paste(sotu, collapse = "\n")
+  temporary <- tibble(speech = i,
+                      text = sotu)
+  all_sotu <- bind_rows(all_sotu, temporary)
+}
+```
+
+And will attach to it the metadata stored in `sotu_meta`:
+
+```{r, message=FALSE, warning=FALSE}
+all_sotu <- full_join(all_sotu, sotu_meta, by="speech")
+```
+
+
+## Exploratory Analysis
+
+Let's split it into tokens. The already seen `unnest_tokens` function will do it in secs..
+
+```{r, message=FALSE, warning=FALSE}
+all_words <- all_sotu %>%
+  unnest_tokens(word, text)
+all_words
+```
+
+He have at the tip of our fingers a corpus of a little over 2M tokens (exactly 2,010,351 tokens). From here you can posit several questions as Is there a temporal pattern to the length of addresses? How do the lengths of the past several administration’s speeches compare to those of FDR, Abraham Lincoln, and George Washington?
+
+The best way to see this is by using a scatter plot. You can construct one by using the `ggplot` function, putting the year on the x-axis and the length in words `n` on the y-axis.
+
+```{r message=FALSE, warning=FALSE}
+all_words %>%
+  group_by(year) %>%
+  count() %>%
+  ggplot() +
+  geom_point(aes(year,
+                 n))
+```
+
+It seems that for the most part addresses steadily increased in length from 1790 to around 1850, decreased for a few years, and then increased again until the end of the 19th century. The length dramatically decreased around World War I, with a handful of fairly large outliers scattered throughout the 20th century. By 2001 their length decreased and begun a new increase. Is there any rational behind these changes? As we have seen, some presidents delivered written message while other delivered orally. Will it be the reason? To find out let's color the points using the `color` argument asking it to color it by the value of `sotu_type`.
+
+```{r message=FALSE, warning=FALSE}
+all_words %>%
+  group_by(year) %>%
+  count() %>%
+  left_join(sotu_meta) %>%
+  ggplot() +
+  geom_point(aes(year,
+                 n,
+                 color = sotu_type))
+```
+As you can see that the rise in the 19th century occurred when the addresses switched to written documents, and the dramatic drop comes when Woodrow Wilson broke tradition and gave his State of the Union as a speech in Congress. The outliers were all written addresses given after the end of World War II.
+
+Another question we can ask ourselves is whether membership of one party or another has an influence on the length of speeches? We can fiond out changing the argument of `color` from `sotu_type` to `party`.
+
+```{r message=FALSE, warning=FALSE}
+all_words %>%
+  group_by(year) %>%
+  count() %>%
+  left_join(sotu_meta) %>%
+  ggplot() +
+  geom_point(aes(year,
+                 n,
+                 color = party))
+```
+It does not seem that the parties have anything to do, but it is curious that since about 1975 the Democrats are the ones who make the longest speeches.
+
+But let's leave these questions, they are more of a student of politics than linguistics.
+
+We saw that texts can be divided into sentences. A feature of style, and of the possible complexity of a text, is the length of sentences. So let's split all speeches into sentences and count how many words.
+
+```{r message=FALSE, warning=FALSE}
+all_sentences <- all_sotu %>%
+    unnest_tokens(sentence,
+                  text,
+                  token = "sentences") %>%
+  mutate(NumberWords = str_count(sentence,
+                            pattern = "\\w+"))
+```
+
+Now let's calculate the median and plot it, as we did with the number of words.
+
+```{r message=FALSE, warning=FALSE}
+all_sentences %>%
+  group_by(year) %>%
+  mutate(median = median(NumberWords)) %>%
+  left_join(sotu_meta) %>%
+  ggplot() +
+  geom_point(aes(year,
+                 median))
+```
+
+The plot shows a strong general trend in shorter sentences over the two centuries of our corpus. Recall that a few addresses in the later half of the 20th century were long, written addresses much like those of the 19th century. It is particularly interesting that these do not show up in terms of the median sentence length. This points out at least one way in which the State of the Union addresses have been changed and adapted over time.
+
+To make the pattern even more explicit, it is possible to add a smoothing line over the plot with the function `geom_smooth`. Smoothing lines are a great addition to many plots. They have a dual purpose of picking out the general trend of time series data, while also highlighting any outlying data points.
+
+```{r message=FALSE, warning=FALSE}
+all_sentences %>%
+    group_by(year) %>%
+    mutate(median = median(NumberWords)) %>%
+    left_join(sotu_meta) %>%
+    ggplot(aes(x = year,
+               y = median)) +
+    geom_point() +
+    geom_smooth()
+```
+
+A warning! It is true that there is a general tendency to shorten the length of sentences in speeches, but there is a small problem that I have not taken into account and, although I would not change the final results, it must be taken into account. The tokenizer takes as sentence marks periods, and question marks and admirations marks, and within the texts there are quite a few abbreviations as mr, as you can see en the following table.
+
+```{r message=FALSE, warning=FALSE}
+all_words %>%
+  filter(str_detect(word, regex("\\bmr\\b", ignore_case = TRUE))) %>%
+  select(word)
+```
+
