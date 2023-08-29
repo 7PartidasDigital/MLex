@@ -154,8 +154,8 @@ speech	president	year	years_active	party	sotu_type
 153	Franklin D. Roosevelt	1942	1941-1945	Democratic	speech
 154	Franklin D. Roosevelt	1943	1941-1945	Democratic	speech
 155	Franklin D. Roosevelt	1944	1941-1945	Democratic	speech
-156	Franklin D. Roosevelt	1945	1945	Democratic	speech
-157	Franklin D. Roosevelt	1945	1945	Democratic	written
+156	Franklin D. Roosevelt	1945	1941-1945	Democratic	speech
+157	Franklin D. Roosevelt	1945	1941-1945	Democratic	written
 158	Harry S Truman	1946	1945-1949	Democratic	written
 159	Harry S Truman	1947	1945-1949	Democratic	speech
 160	Harry S Truman	1948	1945-1949	Democratic	speech
