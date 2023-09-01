@@ -5,12 +5,268 @@ date: "2023.09.21"
 output: html_notebook
 ---
 
-```{r uq1, echo=F, fig.cap="", message=FALSE, warning=FALSE, fig.align="center", out.width='10%'}
-knitr::include_graphics("https://www.emlex.phil.fau.eu/files/2016/06/emlex-logo_schrift_130vert.png")
-```
+<div>
+<center>
+<img src="https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex-logo.png" width="250"/>
+<center>
+</div>
+
 
 # Introduction
 
 This document contains the materials for the *A Hands-on in R for Humanists* workshop offered by the [European Master in Lexicography](https://www.usc.gal/en/studies/masters/arts-and-humanities/european-master-lexicography) at the [Universidade de Santiago de Compostela](https://www.usc.gal/en).
 
-This tutorial shows how to get started with R and it specifically focuses on R for analyzing language data but it offers valuable information for anyone who wants to get started with R. As such, this tutorial is aimed at fresh users or beginners with the aim of showcasing how to set up a R session in RStudio, how to set up R projects, and how to do basic operations using R.
+This tutorial shows how to get started with R and it specifically focuses on R for analyzing language data but it offers valuable information for anyone who wants to get started with R. As such, this tutorial is aimed at beginners with the aim of showcasing how to set up a R session in RStudio, how to set up R projects, and how to do basic operations using R.
+
+## Goals of this tutorial{-}
+
+The goals of this tutorial are:
+
+- How to get started with R 
+- How to orient yourself to R and RStudio
+- How to create and work in R projects
+- How to know where to look for help and to learn more about R
+- Understand the basics of working with data: load data, save data, working with tables, create a simple plot
+
+
+## Audience{-}
+
+The intended audience for this tutorial is beginner-level, with no previous experience using R. Thus, no prior knowledge of R is required.
+
+Participants are encourage to bring and use their own laptops with the software already installed (with a working Internet connection), to ensure that you can continue using what you learn once you leave the workshop.
+
+
+## Installing R and RStudio{-}
+
+For the workshop, we will use RStudio. RStudio is a handy interface to use the programming language R. To use RStudio, you need to install both R and RStudio.
+Please go through the installation steps below to install R and RStudio before the start of the workshop. Please also make sure that the software runs as expected once it is installed.
+
+
+  + You have a Windows computer?
+  
+    - Download R. You have it [here](https://cran.r-project.org/bin/windows/base/R-4.1.3-win.exe)
+    - Run the `.exe` file that was just downloaded
+    - Now, download RStudio. Just click [here](https://download1.rstudio.org/electron/windows/RStudio-2023.06.2-561.exe)
+    - Once it's downloaded, run the `.exe` file that was just downloaded
+    - Once it's installed, open RStudio to make sure it works and there is no error messages.
+
+  + You have a Mac? 
+
+    - Download R. If you have an M1/M2 machine click [here](https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.1-arm64.pkg), but if you have an older Intel machine, them click [here](https://cran.r-project.org/bin/macosx/big-sur-arm64/base/R-4.3.1-x86-64.pkg)
+    - Run the `.pkg` file that was just downloaded
+    - Now, download RStudio. Just click [here](https://download1.rstudio.org/electron/macos/RStudio-2023.06.2-561.dmg)
+    - Once it's downloaded, double click the `.dmg` file to install it
+    - Once it's installed, open RStudio to make sure it works and there is no error messages.
+    
+This is what RStudio looks like when you first open it (well, mine gives some info in Spanish):
+
+```{r mlex01, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='100%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_001.png")
+``` 
+
+# R and RStudio Basics{-}
+
+RStudio is an IDE - Integrated Development Environment. The interface provides easy access to R. The advantage of this application is that R programs and files as well as a project directory can be managed easily. The environment is capable of editing and running program code, viewing outputs and rendering graphics. Furthermore, it is possible to view variables and data objects of an R-script directly in the interface. 
+
+## RStudio: Panes{-}
+
+The GUI - Graphical User Interface - that RStudio provides divides the screen into four areas that are called **panes**:
+
+1. File editor
+2. Environment variables
+3. R console
+4. Management panes (File browser, plots, help display and R packages).
+
+The two most important are the R console (bottom left) and the File editor (or Script in the top left).
+The Environment variables and Management panes are on the right of the screen and they have several tabs: 
+
+* **Environment** (top): Lists all currently defined objects and data sets
+* **History** (top): Lists all commands recently used or associated with a project
+* **Plots** (bottom): Graphical output goes here
+* **Help** (bottom): Find help for R packages and functions.  Don't forget you can type `?` before a function name in the console to get info in the Help section. 
+* **Files** (bottom): Shows the files available to you in your working directory
+
+### R Console (bottom left pane){-}
+
+The console pane allows you to quickly and immediately execute R code. You can experiment with functions here, or quickly print data for viewing. 
+
+Type next to the `>` and press `Enter` to execute. 
+
+***
+
+<div class="warning" style='padding:0.1em; background-color:#00802B; color:#f2f2f2'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+<b>EXERCISE TIME!</b></p>
+<p style='margin-left:1em;'>
+</p></span>
+</div>
+
+<div class="question">` 
+
+1. You can use R like a calculator.  Try typing `2+8` into the **R console**, as is the following image.
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_002.png")
+```
+
+<details>
+  <summary>Answer</summary>
+
+```{r calculator, echo=FALSE}
+  2+8
+```
+</details>
+</div>
+
+***
+
+Here, the plus sign is the **operator**.  Operators are symbols that represent some sort of action.  However, R is, of course, much more than a simple calculator.  To use R more fully, we need to understand **objects**, **functions**, and **indexing** (the number between square brackets)- which you will learn about as we go.
+
+For now, think of *objects as nouns* and *functions as verbs*. 
+
+## Script Editor pane (top left pane){-}
+
+The Editor pane only opens if prompted. It is very flexible since it allows you to go back and forth, highlights the various components of an expression in colors, allows you to save a script to reuse it and correct errors without having to rewrite everything. The way to open it is very simple click on `File`
+
+```{r mlex02, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_003.png")
+``` 
+
+Click on `New File` and then on `R Script` as shown below.
+
+```{r rstudio12, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_004.png")
+```
+
+This `R Script` will be the file in which you do all your work.
+
+## Running commands from a script{-}
+
+In contrast to the R console, which quickly runs code, the Script Editor (in the top left) does not automatically execute code. To run code from a script, insert your cursor on a line with a command, and press `CTRL/CMD+Enter`.
+
+Or highlight some code to only run certain sections of the command, then press `CTRL/CMD+Enter` to run.
+
+Alternatively, use the `Run` button at the top of the pane to execute the current line or selection (see below).
+
+```{r rstudio13, echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_005.png")
+```
+
+# Getting started with R{-}
+
+This section introduces some basic concepts and procedures that help optimize your workflow in R. 
+
+## Setting up an R session{-}
+
+At the beginning of a session, it is common practice to define some basic parameters. This is not required or even necessary, but it may just help further down the line. This session preparation may include specifying options. In the present case, we 
+
++ want R to show numbers as numbers up to 100 decimal points (and not show them in mathematical notation (in mathematical notation, 0.007 would be represented as 0.7e^-3^))
+
++ want R to show maximally 100 results (otherwise, it can happen that R prints out pages-after-pages of some numbers).
+
+Again, the session preparation is not required or necessary but it can help avoid errors.
+
+<div class="warning" style='padding:0.1em; background-color:#51247a; color:#f2f2f2'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+<b>WARNING</b><br>Whenever you see a grey box as the one below, select and cut the text within it, and the paste it into RStudio editor pane.<br></p>
+<p style='margin-left:1em;'>
+</p></span>
+</div>
+
+
+```{r, message=F, warning=F}
+# set options
+options(stringsAsFactors = F)                           
+options(scipen = 100) 
+options(max.print=100) 
+```
+
+## Packages{-}
+
+When using R, most of the functions are not loaded or even installing automatically. Instead, most functions are in contained in what are called **packages**. 
+
+The bare-bone R comes with about 30 packages ("base R").  There are over 10,000 user-contributed packages; you can discover these packages online.  A prevalent collection of packages is the `tidyverse`, which includes `ggplot2`, a package for making graphics.
+
+Before being able to use a package, we need to install the package (using the `install.packages` function) and load the package (using the `library` function). However, a package only needs to be installed once(!) and can then simply be loaded. When you install a package, this will likely install several other packages it depends on. You should have already installed `tidyverse`, `tidyverse`, `quanteda` and `tm` before the workshop, to save time and problems. 
+
+You must load the package in any new R session where you want to use that package. Below I show what you need to type when you want to install the `tidyverse`, the `tidytext`,  the `quanteda`, and the `stopwords` packages (which are the packages that we will need in this workshop).
+
+```{r, echo=T, eval=F, message=F, warning=F}
+install.packages("tidyverse")
+install.packages("tidytext")
+install.packages("quanteda")
+install.packages("stopwords")
+```
+
+To load these packages, use the `library` function which takes the package name as its main argument.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+library(stopwords)
+```
+
+The session preparation section of your script file will thus also state which packages a script relies on.
+
+In the script editor pane of RStudio, the code blocks that install and activate packages would look like this:
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='10%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_006.png")
+``` 
+
+The lines starting with *#* and printed in green are comments. They are very useful to remind you what a line or chunk of code does.
+
+## Getting help{-}
+
+When working with R, you will encounter issues and face challenges. A very good thing about R is that it provides various ways to get help or find information about the issues you face.
+
+### Finding help within R{-}
+
+To get help regrading what functions a package contains, which arguments a function takes or to get information about how to use a function, you can use the `help` function or you can simply type a `?` before the package or or function. I you run any of these two instruccions in the Console pane, the Help tab on the botton right pane will show the answer.
+
+```{r intro_01_11, echo=TRUE, eval=F, warning=F, message=F}
+help(library) 
+?library
+```
+
+
+```{r echo=F, fig.cap="", message=FALSE, warning=FALSE, out.width='25%'}
+knitr::include_graphics("https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/MLex_007.png")
+``` 
+
+There are also other "official" help resources from R/RStudio. 
+
+* Read official package documentation, see vignettes, e.g., Tidyverse <https://cran.r-project.org/package=tidyverse>
+
+* Use the RStudio Cheat Sheets at <https://www.rstudio.com/resources/cheatsheets/>
+
+* Check out the keyboard shortcuts `Help` under `Tools` in RStudio for some good tips 
+
+### Finding help online{-}
+
+One great thing about R is that you can very often find an answer to your question online. [R-bloggers](https://www.r-bloggers.com/) and [Stackoverflow](https://stackoverflow.com/questions/tagged/r) are great places to find tips and help.
+
+<div>
+<center>
+<img src="https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/R_google.png" width="500"/>
+<center>
+</div>
+
+<div class="warning" style='padding:0.1em; background-color:#804000; color:#f2f2f2'>
+<span>
+<p style='margin-top:1em; text-align:center'>
+<b>NOTE</b>
+<br>This R Notebook is based on some [Ladal](https://ladal.edu.au/tutorials.html), [Programming Historian](https://programminghistorian.org/en/lessons/basic-text-processing-in-r) and [CuentaPalabras](http://www.aic.uva.es/cuentapalabras/) tutorials.<br>For linguistics I highly recommend Ladal tutorials.</p>
+<p style='margin-left:1em;'>
+</p></span>
+</div>
+
+<div>
+<center>
+<img src="https://raw.githubusercontent.com/7PartidasDigital/MLex/master/image/EXPLICIT-7PARTIDAS.png"/>
+<br>PID2020-112621GB-I00/AEI/10.13039/501100011033
+</center>
+</div>
