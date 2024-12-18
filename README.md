@@ -13,5 +13,5 @@ Este tutorial enseña cómo iniciarse con R. Se centra en el empleo de R para an
 <img src=https://f-origin.hypotheses.org/wp-content/blogs.dir/3658/files/2015/06/EXPLICIT-7PARTIDAS-e1495528094806.png>
 </p>
 <p align="center">
-<img src=https://7partidas.hypotheses.org/files/2021/06/7P_2_logo.png>
+<img src="https://7partidas.hypotheses.org/files/2021/06/7P_2_logo.png" height=50% width=50%>
 </p>
