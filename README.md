@@ -4,7 +4,7 @@
 <img src=https://fyl.uva.es/wp-content/uploads/2020/07/fyluva-logo.png>
 </p>
 <p align="center">
-<img src=https://fyl.uva.es/wp-content/uploads/2020/07/uva-logo.png>
+<img src=https://www.uva.es/resources/enterprise/img/escudouva.png>
 </p>
 
 Este documentos contiene los materiales para el taller *R para los de Letras* ofrecido por la [Facultad de Filosofía y Letras](https://fyl.uva.es/) de la [Universidad de Valladolid](https://www.uva.es/export/sites/uva/).
