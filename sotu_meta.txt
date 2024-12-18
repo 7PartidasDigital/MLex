@@ -241,4 +241,5 @@ speech	president	year	years_active	party	sotu_type
 240	Donald Trump	2020	2016-2020	Republican	speech
 241	Joe Biden	2021	2021-2025	Democratic	speech
 242	Joe Biden	2022	2021-2025	Democratic	speech
-243	Joe Biden	2021	2021-2025	Democratic	speech
+243	Joe Biden	2023	2021-2025	Democratic	speech
+244	Joe Biden	2023	2021-2025	Democratic	speech
