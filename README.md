@@ -1,9 +1,15 @@
-# MLex
-This repository contains the materials for the *A Hands-on in R for Luinguists* workshop offered by the [European Master in Lexicography](https://www.usc.gal/en/studies/masters/arts-and-humanities/european-master-lexicography) at the [Universidade de Santiago de Compostela](https://www.usc.gal/en).
+# Taller de R
 
-This tutorial shows how to get started with R and it specifically focuses on R for analyzing language data but it offers valuable information for anyone who wants to get started with R. As such, this tutorial is aimed at beginners with the aim of showcasing how to set up a R session in RStudio, how to set up R projects, and how to do basic operations using R.
+<p align="center">
+<img src=https://fyl.uva.es/wp-content/uploads/2020/07/fyluva-logo.png>
+</p>
+<p align="center">
+<img src=https://fyl.uva.es/wp-content/uploads/2020/07/uva-logo.png>
+</p>
 
-For linguistics I highly recommend [Ladal](https://ladal.edu.au/tutorials.html) tutorials.
+Este documentos contiene los materiales para el taller *R para los de Letras* ofrecido por la [Facultad de Filosofía y Letras](https://fyl.uva.es/) de la [Universidad de Valladolid](https://www.uva.es/export/sites/uva/).
+
+Este tutorial enseña cómo iniciarse con R. Se centra en el empleo de R para analizar datos textuales, pero ofrece información valiosa para cualquiera que quiera introducirse en R. Como tal, este tutorial está dirigido a principiantes con el objetivo de mostrar cómo configurar una sesión de R en RStudio, cómo configurar proyectos en R y cómo realizar operaciones básicas usando R.
 
 <p align="center">
 <img src=https://f-origin.hypotheses.org/wp-content/blogs.dir/3658/files/2015/06/EXPLICIT-7PARTIDAS-e1495528094806.png>
