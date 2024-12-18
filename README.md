@@ -5,7 +5,7 @@
 </p>
 
 
-Este documentos contiene los materiales para el taller *R para los de Letras* ofrecido por la [Facultad de Filosofía y Letras](https://fyl.uva.es/) de la [Universidad de Valladolid](https://www.uva.es/export/sites/uva/).
+Este documentos contiene los materiales para el taller _R para los **de Letras**_ ofrecido por la [Facultad de Filosofía y Letras](https://fyl.uva.es/) de la [Universidad de Valladolid](https://www.uva.es/export/sites/uva/).
 
 Este tutorial enseña cómo iniciarse con R. Se centra en el empleo de R para analizar datos textuales, pero ofrece información valiosa para cualquiera que quiera introducirse en R. Como tal, este tutorial está dirigido a principiantes con el objetivo de mostrar cómo configurar una sesión de R en RStudio, cómo configurar proyectos en R y cómo realizar operaciones básicas usando R.
 
